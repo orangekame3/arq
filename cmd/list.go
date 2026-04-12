@@ -38,7 +38,7 @@ var listCmd = &cobra.Command{
 				p.AuthorShort(),
 				p.PublishedShort(),
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), strings.Join(fields, sep))
+			_, _ = fmt.Fprintln(cmd.OutOrStdout(), strings.Join(fields, sep))
 		}
 		return nil
 	},

@@ -46,7 +46,7 @@ func Fetch(id string) (*paper.Paper, error) {
 	if err != nil {
 		return nil, fmt.Errorf("fetch metadata: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -69,7 +69,7 @@ func DownloadPDF(p *paper.Paper) error {
 	if err != nil {
 		return fmt.Errorf("download pdf: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("download pdf: status %d", resp.StatusCode)
@@ -80,10 +80,10 @@ func DownloadPDF(p *paper.Paper) error {
 	if err != nil {
 		return fmt.Errorf("create pdf file: %w", err)
 	}
-	defer f.Close()
 
 	if _, err := io.Copy(f, resp.Body); err != nil {
+		_ = f.Close()
 		return fmt.Errorf("write pdf: %w", err)
 	}
-	return nil
+	return f.Close()
 }

@@ -26,7 +26,7 @@ var selectCmd = &cobra.Command{
 		// Build TSV input for fzf
 		var input strings.Builder
 		for _, p := range papers {
-			fmt.Fprintf(&input, "%s\t%s\t%s\t%s\n",
+			_, _ = fmt.Fprintf(&input, "%s\t%s\t%s\t%s\n",
 				p.ID, p.Title, p.AuthorShort(), p.PublishedShort())
 		}
 
@@ -48,7 +48,7 @@ var selectCmd = &cobra.Command{
 			return nil
 		}
 		id, _, _ := strings.Cut(line, "\t")
-		fmt.Fprintln(cmd.OutOrStdout(), id)
+		_, _ = fmt.Fprintln(cmd.OutOrStdout(), id)
 		return nil
 	},
 }

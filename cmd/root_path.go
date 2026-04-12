@@ -20,7 +20,7 @@ Priority: $ARQ_ROOT > config file > ~/papers`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			fmt.Fprintln(cmd.OutOrStdout(), paper.Root())
+			_, _ = fmt.Fprintln(cmd.OutOrStdout(), paper.Root())
 			return nil
 		}
 		c := config.Load()
@@ -28,7 +28,7 @@ Priority: $ARQ_ROOT > config file > ~/papers`,
 		if err := config.Save(c); err != nil {
 			return fmt.Errorf("save config: %w", err)
 		}
-		fmt.Fprintf(cmd.OutOrStdout(), "root set to %s\n", args[0])
+		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "root set to %s\n", args[0])
 		return nil
 	},
 }
