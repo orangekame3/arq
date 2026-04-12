@@ -14,13 +14,13 @@ type atomFeed struct {
 }
 
 type atomEntry struct {
-	ID              string          `xml:"id"`
-	Title           string          `xml:"title"`
-	Summary         string          `xml:"summary"`
-	Published       string          `xml:"published"`
-	Authors         []atomName      `xml:"author"`
-	Links           []atomLink      `xml:"link"`
-	PrimaryCategory atomCategory `xml:"http://arxiv.org/schemas/atom primary_category"`
+	ID              string         `xml:"id"`
+	Title           string         `xml:"title"`
+	Summary         string         `xml:"summary"`
+	Published       string         `xml:"published"`
+	Authors         []atomName     `xml:"author"`
+	Links           []atomLink     `xml:"link"`
+	PrimaryCategory atomCategory   `xml:"http://arxiv.org/schemas/atom primary_category"`
 	Categories      []atomCategory `xml:"category"`
 }
 
