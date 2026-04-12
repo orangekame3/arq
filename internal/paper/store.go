@@ -38,6 +38,14 @@ func MetaPath(p *Paper) string {
 	return filepath.Join(Dir(p), "meta.json")
 }
 
+// ThumbnailPath returns the absolute path of the thumbnail if set.
+func ThumbnailPath(p *Paper) string {
+	if p.Thumbnail == "" {
+		return ""
+	}
+	return filepath.Join(Dir(p), p.Thumbnail)
+}
+
 // Save writes the paper metadata and ensures the directory exists.
 func Save(p *Paper) error {
 	dir := Dir(p)
