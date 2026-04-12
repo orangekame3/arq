@@ -3,13 +3,27 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"os/exec"
+	"strings"
 
+	"github.com/charmbracelet/lipgloss"
+	"github.com/mattn/go-isatty"
 	"github.com/orangekame3/arq/internal/paper"
 	"github.com/orangekame3/arq/internal/query"
 	"github.com/spf13/cobra"
 )
 
 var showJSON bool
+
+var (
+	titleStyle     = lipgloss.NewStyle().Bold(true)
+	titleJAStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("3"))
+	labelStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("8"))
+	sectionStyle   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("6"))
+	sectionJAStyle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("2"))
+	dividerStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("8"))
+)
 
 var showCmd = &cobra.Command{
 	Use:   "show <query>",
@@ -53,23 +67,44 @@ var showCmd = &cobra.Command{
 		}
 
 		w := cmd.OutOrStdout()
-		_, _ = fmt.Fprintf(w, "Title:     %s\n", p.Title)
+
+		// Show thumbnail if TTY and chafa is available
+		if thumb := paper.ThumbnailPath(p); thumb != "" && isatty.IsTerminal(os.Stdout.Fd()) {
+			if chafa, err := exec.LookPath("chafa"); err == nil {
+				c := exec.Command(chafa, "--format=kitty", "--size=40x15", thumb)
+				c.Stdout = w
+				_ = c.Run()
+				_, _ = fmt.Fprintln(w)
+			}
+		}
+
+		divider := dividerStyle.Render(strings.Repeat("─", 50))
+
+		_, _ = fmt.Fprintln(w, titleStyle.Render(p.Title))
 		if p.TitleJA != "" {
-			_, _ = fmt.Fprintf(w, "Title(ja): %s\n", p.TitleJA)
+			_, _ = fmt.Fprintln(w, titleJAStyle.Render(p.TitleJA))
 		}
-		_, _ = fmt.Fprintf(w, "Authors:   %s\n", p.AuthorShort())
-		_, _ = fmt.Fprintf(w, "Published: %s\n", p.Published)
-		_, _ = fmt.Fprintf(w, "Category:  %s\n", p.Category)
-		_, _ = fmt.Fprintf(w, "Path:      %s\n", paper.PDFPath(p))
+		_, _ = fmt.Fprintln(w)
+
+		_, _ = fmt.Fprintf(w, "%s  %s\n", labelStyle.Render("Authors  "), p.AuthorShort())
+		_, _ = fmt.Fprintf(w, "%s  %s\n", labelStyle.Render("Published"), p.Published)
+		_, _ = fmt.Fprintf(w, "%s  %s\n", labelStyle.Render("Category "), p.Category)
+		_, _ = fmt.Fprintf(w, "%s  %s\n", labelStyle.Render("Path     "), paper.PDFPath(p))
 		if thumb := paper.ThumbnailPath(p); thumb != "" {
-			_, _ = fmt.Fprintf(w, "Thumbnail: %s\n", thumb)
+			_, _ = fmt.Fprintf(w, "%s  %s\n", labelStyle.Render("Thumbnail"), thumb)
 		}
-		_, _ = fmt.Fprintln(w, "")
-		_, _ = fmt.Fprintln(w, "--- Abstract ---")
+
+		_, _ = fmt.Fprintln(w)
+		_, _ = fmt.Fprintln(w, divider)
+		_, _ = fmt.Fprintln(w, sectionStyle.Render("Abstract"))
+		_, _ = fmt.Fprintln(w, divider)
 		_, _ = fmt.Fprintln(w, p.Abstract)
+
 		if p.AbstractJA != "" {
-			_, _ = fmt.Fprintln(w, "")
-			_, _ = fmt.Fprintln(w, "--- Abstract (ja) ---")
+			_, _ = fmt.Fprintln(w)
+			_, _ = fmt.Fprintln(w, divider)
+			_, _ = fmt.Fprintln(w, sectionJAStyle.Render("要旨"))
+			_, _ = fmt.Fprintln(w, divider)
 			_, _ = fmt.Fprintln(w, p.AbstractJA)
 		}
 		return nil
