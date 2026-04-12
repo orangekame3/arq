@@ -33,6 +33,7 @@ var showCmd = &cobra.Command{
 				Category   string   `json:"category"`
 				PDFURL     string   `json:"pdf_url"`
 				Path       string   `json:"path"`
+				Thumbnail  string   `json:"thumbnail,omitempty"`
 			}
 			enc := json.NewEncoder(cmd.OutOrStdout())
 			enc.SetIndent("", "  ")
@@ -47,6 +48,7 @@ var showCmd = &cobra.Command{
 				Category:   p.Category,
 				PDFURL:     p.PDFURL,
 				Path:       paper.PDFPath(p),
+				Thumbnail:  paper.ThumbnailPath(p),
 			})
 		}
 
@@ -59,6 +61,9 @@ var showCmd = &cobra.Command{
 		_, _ = fmt.Fprintf(w, "Published: %s\n", p.Published)
 		_, _ = fmt.Fprintf(w, "Category:  %s\n", p.Category)
 		_, _ = fmt.Fprintf(w, "Path:      %s\n", paper.PDFPath(p))
+		if thumb := paper.ThumbnailPath(p); thumb != "" {
+			_, _ = fmt.Fprintf(w, "Thumbnail: %s\n", thumb)
+		}
 		_, _ = fmt.Fprintln(w, "")
 		_, _ = fmt.Fprintln(w, "--- Abstract ---")
 		_, _ = fmt.Fprintln(w, p.Abstract)

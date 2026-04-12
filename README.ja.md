@@ -34,6 +34,8 @@ arq path <query>
 arq open <query>
 arq has <id>
 arq select
+arq thumbnail set <query> <image>  # サムネイル設定
+arq thumbnail path <query>         # サムネイルパス取得
 arq config
 arq version
 ```
