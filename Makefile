@@ -4,7 +4,7 @@ build:
 	go build -o arq .
 
 test:
-	go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+	go test -race ./...
 
 coverage: test
 	go tool cover -func=coverage.txt
