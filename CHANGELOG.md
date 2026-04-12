@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.9](https://github.com/orangekame3/arq/compare/v0.0.8...v0.0.9) - 2026-04-12
+- refactor(cmd): remove language option and enhance show output by @orangekame3 in https://github.com/orangekame3/arq/pull/25
+
 ## [v0.0.8](https://github.com/orangekame3/arq/compare/v0.0.7...v0.0.8) - 2026-04-12
 - feat(cmd): add --force option to re-fetch existing papers by @orangekame3 in https://github.com/orangekame3/arq/pull/23
 
