@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.6](https://github.com/orangekame3/arq/compare/v0.0.5...v0.0.6) - 2026-04-12
+- feat(config): add auto-translate feature and update configuration options by @orangekame3 in https://github.com/orangekame3/arq/pull/18
+
 ## [v0.0.5](https://github.com/orangekame3/arq/compare/v0.0.4...v0.0.5) - 2026-04-12
 - feat(config): add translation configuration and update commands by @orangekame3 in https://github.com/orangekame3/arq/pull/16
 
