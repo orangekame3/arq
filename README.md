@@ -6,6 +6,14 @@ Local arXiv paper index for fzf-driven exploration.
 
 ## Install
 
+### Homebrew
+
+```bash
+brew install orangekame3/tap/arq
+```
+
+### Go
+
 ```bash
 go install github.com/orangekame3/arq@latest
 ```

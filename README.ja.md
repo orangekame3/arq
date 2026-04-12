@@ -6,6 +6,14 @@ fzf で探索するためのローカル arXiv 論文インデックス。
 
 ## インストール
 
+### Homebrew
+
+```bash
+brew install orangekame3/tap/arq
+```
+
+### Go
+
 ```bash
 go install github.com/orangekame3/arq@latest
 ```
