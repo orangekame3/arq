@@ -29,7 +29,7 @@ arq get --force 2303.12345          # 再取得して上書き
 arq get --open 2303.12345           # ダウンロード後に PDF を開く
 
 arq list [--tsv|--json|--id]
-arq show <query> [--json|--lang ja]
+arq show <query> [--json]
 arq path <query>
 arq open <query>
 arq has <id>
@@ -61,14 +61,14 @@ arq list --tsv | fzf --with-nth=2.. | cut -f1
 # fzf プレビュー付きで論文を開く
 arqo() {
   local id
-  id=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show --lang ja {1}' | cut -f1)
+  id=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}' | cut -f1)
   [ -n "$id" ] && arq open "$id"
 }
 
 # 論文ディレクトリに cd
 arqd() {
   local path
-  path=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show --lang ja {1}' | cut -f1)
+  path=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}' | cut -f1)
   [ -n "$path" ] && cd "$(dirname "$(arq path "$path")")"
 }
 ```
@@ -111,13 +111,13 @@ arq config set translate.enabled true
 arq config set translate.api_key sk-xxx
 arq get 2303.12345                      # 自動翻訳
 arq get --no-translate 2303.12345       # 今回だけスキップ
-arq show --lang ja 2303.12345
+arq show 2303.12345                    # 英語・日本語の両方を表示
 ```
 
 fzf プレビューで日本語表示:
 
 ```bash
-arq list --tsv | fzf --with-nth=2.. --preview 'arq show --lang ja {1}'
+arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}'
 ```
 
 ## 設定
