@@ -16,6 +16,7 @@ import (
 var (
 	getTranslate   bool
 	getNoTranslate bool
+	getOpen        bool
 )
 
 var getCmd = &cobra.Command{
@@ -85,18 +86,6 @@ func fetchOne(cmd *cobra.Command, id string) error {
 		return err
 	}
 
-	shouldTranslate := getTranslate || (config.Load().Translate.Enabled && !getNoTranslate)
-	if shouldTranslate {
-		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "translating...\n")
-		result, err := translate.Translate(p.Title, p.Abstract)
-		if err != nil {
-			_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "⚠ translation failed: %s\n", err)
-		} else {
-			p.TitleJA = result.Title
-			p.AbstractJA = result.Abstract
-		}
-	}
-
 	if err := paper.Save(p); err != nil {
 		return err
 	}
@@ -106,11 +95,29 @@ func fetchOne(cmd *cobra.Command, id string) error {
 		return err
 	}
 
+	shouldTranslate := getTranslate || (config.Load().Translate.Enabled && !getNoTranslate)
+	if shouldTranslate {
+		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "translating...\n")
+		result, err := translate.Translate(p.Title, p.Abstract)
+		if err != nil {
+			_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "⚠ translation failed: %s\n", err)
+		} else {
+			p.TitleJA = result.Title
+			p.AbstractJA = result.Abstract
+			_ = paper.Save(p)
+		}
+	}
+
 	_, _ = fmt.Fprintf(cmd.OutOrStdout(), "✔ added %s  %s\n", p.ID, p.Title)
+
+	if getOpen {
+		_ = openFile(paper.PDFPath(p))
+	}
 	return nil
 }
 
 func init() {
 	getCmd.Flags().BoolVar(&getTranslate, "translate", false, "Translate title and abstract")
 	getCmd.Flags().BoolVar(&getNoTranslate, "no-translate", false, "Skip translation even if enabled in config")
+	getCmd.Flags().BoolVar(&getOpen, "open", false, "Open PDF after download")
 }
