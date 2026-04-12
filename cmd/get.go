@@ -17,6 +17,7 @@ var (
 	getTranslate   bool
 	getNoTranslate bool
 	getOpen        bool
+	getForce       bool
 )
 
 var getCmd = &cobra.Command{
@@ -74,9 +75,12 @@ func collectIDs(args []string) ([]string, error) {
 }
 
 func fetchOne(cmd *cobra.Command, id string) error {
-	if _, err := paper.FindByID(id); err == nil {
-		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "already exists: %s\n", id)
-		return nil
+	if existing, err := paper.FindByID(id); err == nil {
+		if !getForce {
+			_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "already exists: %s (use --force to re-fetch)\n", id)
+			return nil
+		}
+		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "overwriting %s...\n", existing.ID)
 	}
 
 	_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "fetching %s...\n", id)
@@ -120,4 +124,5 @@ func init() {
 	getCmd.Flags().BoolVar(&getTranslate, "translate", false, "Translate title and abstract")
 	getCmd.Flags().BoolVar(&getNoTranslate, "no-translate", false, "Skip translation even if enabled in config")
 	getCmd.Flags().BoolVar(&getOpen, "open", false, "Open PDF after download")
+	getCmd.Flags().BoolVar(&getForce, "force", false, "Re-fetch even if already exists")
 }
