@@ -100,12 +100,13 @@ $ARQ_ROOT/
 
 ## Translation
 
-`arq get --translate` translates the title and abstract to Japanese using an LLM. Supports Anthropic and OpenAI.
+Translate title and abstract using an LLM on `arq get`. Supports OpenAI and Anthropic.
 
 ```bash
-arq config set translate.provider anthropic
-arq config set translate.api_key sk-ant-xxx
-arq get --translate 2303.12345
+arq config set translate.enabled true
+arq config set translate.api_key sk-xxx
+arq get 2303.12345                      # auto-translates
+arq get --no-translate 2303.12345       # skip for this one
 arq show --lang ja 2303.12345
 ```
 
@@ -129,7 +130,8 @@ Available keys:
 | Key | Description |
 |---|---|
 | `root` | Paper storage root directory |
-| `translate.provider` | `anthropic` or `openai` |
+| `translate.enabled` | Auto-translate on get (`true` / `false`) |
+| `translate.provider` | `openai` or `anthropic` (default: auto-detect from API key) |
 | `translate.model` | Model name (default: `gpt-4o-mini` / `claude-haiku-4-5-20251001`) |
 | `translate.lang` | Target language (default: `Japanese`) |
 | `translate.api_key` | API key (or use `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` env var) |
@@ -145,9 +147,11 @@ Root directory priority:
 root = "/Users/you/papers"
 
 [translate]
-provider = "anthropic"
-model = "claude-haiku-4-5-20251001"
-api_key = "sk-ant-xxx"
+enabled = true
+provider = "openai"
+model = "gpt-4o-mini"
+lang = "Japanese"
+api_key = "sk-xxx"
 ```
 
 ## Acknowledgements

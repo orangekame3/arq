@@ -19,6 +19,7 @@ Without subcommands, prints the current configuration.
 
 Available keys for 'config set':
   root                  Paper storage root directory
+  translate.enabled     Auto-translate on get ("true" or "false")
   translate.provider    LLM provider ("anthropic" or "openai")
   translate.model       Model name (e.g. "gpt-4o-mini", "claude-haiku-4-5-20251001")
   translate.lang        Target language (default: "Japanese")
@@ -28,6 +29,7 @@ Available keys for 'config set':
 		w := cmd.OutOrStdout()
 		_, _ = fmt.Fprintf(w, "Config file: %s\n\n", config.Path())
 		_, _ = fmt.Fprintf(w, "root                 = %q\n", c.Root)
+		_, _ = fmt.Fprintf(w, "translate.enabled    = %v\n", c.Translate.Enabled)
 		_, _ = fmt.Fprintf(w, "translate.provider   = %q\n", c.Translate.Provider)
 		_, _ = fmt.Fprintf(w, "translate.model      = %q\n", c.Translate.Model)
 		_, _ = fmt.Fprintf(w, "translate.lang       = %q\n", defaultStr(c.Translate.Lang, "Japanese"))
@@ -54,6 +56,11 @@ var configSetCmd = &cobra.Command{
 		switch key {
 		case "root":
 			c.Root = value
+		case "translate.enabled":
+			if value != "true" && value != "false" {
+				return fmt.Errorf("translate.enabled must be \"true\" or \"false\"")
+			}
+			c.Translate.Enabled = value == "true"
 		case "translate.provider":
 			if value != "anthropic" && value != "openai" {
 				return fmt.Errorf("provider must be \"anthropic\" or \"openai\"")
@@ -66,7 +73,7 @@ var configSetCmd = &cobra.Command{
 		case "translate.api_key":
 			c.Translate.APIKey = value
 		default:
-			return fmt.Errorf("unknown key: %s\n\nAvailable keys: root, translate.provider, translate.model, translate.lang, translate.api_key", key)
+			return fmt.Errorf("unknown key: %s\n\nAvailable keys: root, translate.enabled, translate.provider, translate.model, translate.lang, translate.api_key", key)
 		}
 
 		if err := config.Save(c); err != nil {
@@ -89,6 +96,8 @@ var configGetCmd = &cobra.Command{
 		switch key {
 		case "root":
 			value = c.Root
+		case "translate.enabled":
+			value = fmt.Sprintf("%v", c.Translate.Enabled)
 		case "translate.provider":
 			value = c.Translate.Provider
 		case "translate.model":

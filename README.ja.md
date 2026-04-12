@@ -100,12 +100,13 @@ $ARQ_ROOT/
 
 ## 翻訳
 
-`arq get --translate` で LLM を使ってタイトルとアブストラクトを日本語に翻訳する。Anthropic と OpenAI に対応。
+`arq get` 時に LLM でタイトルとアブストラクトを翻訳する。OpenAI と Anthropic に対応。
 
 ```bash
-arq config set translate.provider anthropic
-arq config set translate.api_key sk-ant-xxx
-arq get --translate 2303.12345
+arq config set translate.enabled true
+arq config set translate.api_key sk-xxx
+arq get 2303.12345                      # 自動翻訳
+arq get --no-translate 2303.12345       # 今回だけスキップ
 arq show --lang ja 2303.12345
 ```
 
@@ -129,7 +130,8 @@ arq config setup                        # 対話式セットアップ
 | キー | 説明 |
 |---|---|
 | `root` | 論文ストレージのルートディレクトリ |
-| `translate.provider` | `anthropic` または `openai` |
+| `translate.enabled` | get 時に自動翻訳（`true` / `false`） |
+| `translate.provider` | `openai` または `anthropic`（デフォルト: API キーから自動検出） |
 | `translate.model` | モデル名（デフォルト: `gpt-4o-mini` / `claude-haiku-4-5-20251001`） |
 | `translate.lang` | 翻訳先の言語（デフォルト: `Japanese`） |
 | `translate.api_key` | API キー（`OPENAI_API_KEY` / `ANTHROPIC_API_KEY` 環境変数も可） |
@@ -145,9 +147,11 @@ root ディレクトリの優先順位:
 root = "/Users/you/papers"
 
 [translate]
-provider = "anthropic"
-model = "claude-haiku-4-5-20251001"
-api_key = "sk-ant-xxx"
+enabled = true
+provider = "openai"
+model = "gpt-4o-mini"
+lang = "Japanese"
+api_key = "sk-xxx"
 ```
 
 ## Acknowledgements
