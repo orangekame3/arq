@@ -7,16 +7,12 @@ run:
 linters:
   enable:
     - errcheck
-    - gosimple
     - govet
     - ineffassign
     - staticcheck
     - unused
+
+formatters:
+  enable:
     - gofmt
     - goimports
-
-exclusions:
-  rules:
-    - path: _test\.go
-      linters:
-        - errcheck

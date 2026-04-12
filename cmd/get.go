@@ -20,11 +20,11 @@ var getCmd = &cobra.Command{
 
 		// Check if already downloaded
 		if _, err := paper.FindByID(id); err == nil {
-			fmt.Fprintf(cmd.ErrOrStderr(), "already exists: %s\n", id)
+			_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "already exists: %s\n", id)
 			return nil
 		}
 
-		fmt.Fprintf(cmd.ErrOrStderr(), "fetching %s...\n", id)
+		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "fetching %s...\n", id)
 
 		p, err := arxiv.Fetch(id)
 		if err != nil {
@@ -35,12 +35,12 @@ var getCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Fprintf(cmd.ErrOrStderr(), "downloading PDF...\n")
+		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "downloading PDF...\n")
 		if err := arxiv.DownloadPDF(p); err != nil {
 			return err
 		}
 
-		fmt.Fprintf(cmd.OutOrStdout(), "✔ added %s  %s\n", p.ID, p.Title)
+		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "✔ added %s  %s\n", p.ID, p.Title)
 		return nil
 	},
 }

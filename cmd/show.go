@@ -19,12 +19,12 @@ var showCmd = &cobra.Command{
 		}
 
 		w := cmd.OutOrStdout()
-		fmt.Fprintf(w, "Title:     %s\n", p.Title)
-		fmt.Fprintf(w, "Authors:   %s\n", p.AuthorShort())
-		fmt.Fprintf(w, "Published: %s\n", p.Published)
-		fmt.Fprintf(w, "Category:  %s\n", p.Category)
-		fmt.Fprintf(w, "Abstract:\n%s\n", p.Abstract)
-		fmt.Fprintf(w, "Path:      %s\n", paper.PDFPath(p))
+		_, _ = fmt.Fprintf(w, "Title:     %s\n", p.Title)
+		_, _ = fmt.Fprintf(w, "Authors:   %s\n", p.AuthorShort())
+		_, _ = fmt.Fprintf(w, "Published: %s\n", p.Published)
+		_, _ = fmt.Fprintf(w, "Category:  %s\n", p.Category)
+		_, _ = fmt.Fprintf(w, "Abstract:\n%s\n", p.Abstract)
+		_, _ = fmt.Fprintf(w, "Path:      %s\n", paper.PDFPath(p))
 		return nil
 	},
 }

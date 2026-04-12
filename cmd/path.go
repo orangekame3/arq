@@ -17,7 +17,7 @@ var pathCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Fprintln(cmd.OutOrStdout(), paper.PDFPath(p))
+		_, _ = fmt.Fprintln(cmd.OutOrStdout(), paper.PDFPath(p))
 		return nil
 	},
 }
