@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.11](https://github.com/orangekame3/arq/compare/v0.0.10...v0.0.11) - 2026-04-12
+- feat(cmd): add remove command to delete papers from local storage by @orangekame3 in https://github.com/orangekame3/arq/pull/30
+
 ## [v0.0.10](https://github.com/orangekame3/arq/compare/v0.0.9...v0.0.10) - 2026-04-12
 - feat(cmd): add thumbnail management commands and update paper model by @orangekame3 in https://github.com/orangekame3/arq/pull/28
 
