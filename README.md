@@ -34,6 +34,8 @@ arq path <query>
 arq open <query>
 arq has <id>
 arq select
+arq thumbnail set <query> <image>  # set thumbnail
+arq thumbnail path <query>         # get thumbnail path
 arq config
 arq version
 ```
