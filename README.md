@@ -23,11 +23,14 @@ go install github.com/orangekame3/arq@latest
 ```bash
 arq get 2303.12345
 arq get https://arxiv.org/abs/2303.12345
+arq get 2303.12345 2401.67890       # multiple IDs
+cat ids.txt | arq get -             # batch from stdin
 
-arq list [--tsv|--json]
+arq list [--tsv|--json|--id]
+arq show <query> [--json]
 arq path <query>
 arq open <query>
-arq show <query>
+arq has <id>
 arq select
 ```
 

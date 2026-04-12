@@ -12,6 +12,7 @@ import (
 var (
 	listTSV  bool
 	listJSON bool
+	listID   bool
 )
 
 var listCmd = &cobra.Command{
@@ -25,6 +26,13 @@ var listCmd = &cobra.Command{
 
 		if listJSON {
 			return printJSON(cmd, papers)
+		}
+
+		if listID {
+			for _, p := range papers {
+				_, _ = fmt.Fprintln(cmd.OutOrStdout(), p.ID)
+			}
+			return nil
 		}
 
 		for _, p := range papers {
@@ -69,4 +77,5 @@ func printJSON(cmd *cobra.Command, papers []*paper.Paper) error {
 func init() {
 	listCmd.Flags().BoolVar(&listTSV, "tsv", false, "Output in TSV format")
 	listCmd.Flags().BoolVar(&listJSON, "json", false, "Output in JSON format")
+	listCmd.Flags().BoolVar(&listID, "id", false, "Output IDs only")
 }

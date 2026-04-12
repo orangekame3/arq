@@ -11,11 +11,10 @@ coverage: test
 	go tool cover -html=coverage.txt -o coverage.html
 
 lint:
-	golangci-lint run ./...
+	go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest run ./...
 
 fmt:
 	go fmt ./...
-	gofumpt -w .
 
 vet:
 	go vet ./...
@@ -26,4 +25,4 @@ clean:
 ci: fmt vet test lint fmt-check
 
 fmt-check:
-	@test -z "$$(gofumpt -l .)" || (echo "Files need formatting:"; gofumpt -l .; exit 1)
+	@test -z "$$(go fmt ./...)" || (echo "Files need formatting"; exit 1)

@@ -22,5 +22,6 @@ func init() {
 	rootCmd.AddCommand(showCmd)
 	rootCmd.AddCommand(selectCmd)
 	rootCmd.AddCommand(rootPathCmd)
+	rootCmd.AddCommand(hasCmd)
 	rootCmd.AddCommand(versionCmd)
 }
