@@ -17,29 +17,33 @@ type Result struct {
 	Abstract string `json:"abstract"`
 }
 
-const prompt = `Translate the following academic paper title and abstract into Japanese.
+const promptTemplate = `Translate the following academic paper title and abstract into %s.
 Output ONLY a JSON object with "title" and "abstract" keys. No markdown, no explanation.
 
 Title: %s
 
 Abstract: %s`
 
-// Translate translates a title and abstract to Japanese using the configured LLM.
+// Translate translates a title and abstract using the configured LLM.
 // Provider detection: config file > environment variable auto-detection.
 func Translate(title, abstract string) (*Result, error) {
 	cfg := config.Load()
 	provider := cfg.Translate.Provider
 	model := cfg.Translate.Model
 	apiKey := cfg.Translate.APIKey
+	lang := cfg.Translate.Lang
+	if lang == "" {
+		lang = "Japanese"
+	}
 
 	// Auto-detect provider from env vars if not configured
 	if provider == "" {
-		if apiKey != "" || os.Getenv("ANTHROPIC_API_KEY") != "" {
-			provider = "anthropic"
-		} else if os.Getenv("OPENAI_API_KEY") != "" {
+		if apiKey != "" || os.Getenv("OPENAI_API_KEY") != "" {
 			provider = "openai"
+		} else if os.Getenv("ANTHROPIC_API_KEY") != "" {
+			provider = "anthropic"
 		} else {
-			return nil, fmt.Errorf("no API key found: run 'arq config setup' or set ANTHROPIC_API_KEY / OPENAI_API_KEY")
+			return nil, fmt.Errorf("no API key found: run 'arq config setup' or set OPENAI_API_KEY / ANTHROPIC_API_KEY")
 		}
 	}
 
@@ -56,7 +60,7 @@ func Translate(title, abstract string) (*Result, error) {
 		return nil, fmt.Errorf("no API key for %s: run 'arq config setup' or set env var", provider)
 	}
 
-	userPrompt := fmt.Sprintf(prompt, title, abstract)
+	userPrompt := fmt.Sprintf(promptTemplate, lang, title, abstract)
 
 	switch provider {
 	case "anthropic":
