@@ -6,14 +6,16 @@ import (
 
 // Paper represents an arXiv paper with its metadata.
 type Paper struct {
-	ID        string   `json:"id"`
-	Title     string   `json:"title"`
-	Authors   []string `json:"authors"`
-	Abstract  string   `json:"abstract"`
-	Published string   `json:"published"`
-	Category  string   `json:"category"`
-	PDFURL    string   `json:"pdf_url"`
-	AddedAt   string   `json:"added_at"`
+	ID         string   `json:"id"`
+	Title      string   `json:"title"`
+	TitleJA    string   `json:"title_ja,omitempty"`
+	Authors    []string `json:"authors"`
+	Abstract   string   `json:"abstract"`
+	AbstractJA string   `json:"abstract_ja,omitempty"`
+	Published  string   `json:"published"`
+	Category   string   `json:"category"`
+	PDFURL     string   `json:"pdf_url"`
+	AddedAt    string   `json:"added_at"`
 }
 
 // AuthorShort returns a short author string like "Smith et al." or "Smith, Tanaka".

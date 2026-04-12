@@ -10,7 +10,15 @@ import (
 
 // Config holds arq configuration.
 type Config struct {
-	Root string `toml:"root"`
+	Root      string          `toml:"root"`
+	Translate TranslateConfig `toml:"translate"`
+}
+
+// TranslateConfig holds LLM translation settings.
+type TranslateConfig struct {
+	Provider string `toml:"provider"` // "anthropic" or "openai"
+	Model    string `toml:"model"`    // e.g. "claude-haiku-4-5-20251001", "gpt-4o-mini"
+	APIKey   string `toml:"api_key"`  // optional, falls back to env var
 }
 
 // Path returns the config file path (~/.config/arq/config.toml).
