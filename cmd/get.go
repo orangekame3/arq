@@ -8,8 +8,11 @@ import (
 
 	"github.com/orangekame3/arq/internal/arxiv"
 	"github.com/orangekame3/arq/internal/paper"
+	"github.com/orangekame3/arq/internal/translate"
 	"github.com/spf13/cobra"
 )
+
+var getTranslate bool
 
 var getCmd = &cobra.Command{
 	Use:   "get <id-or-url> [...]",
@@ -17,7 +20,8 @@ var getCmd = &cobra.Command{
 	Long: `Fetch papers from arXiv.
 
 Accepts one or more arXiv IDs or URLs as arguments.
-Use "-" to read IDs from stdin (one per line).`,
+Use "-" to read IDs from stdin (one per line).
+Use --translate to translate title and abstract to Japanese.`,
 	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ids, err := collectIDs(args)
@@ -77,6 +81,17 @@ func fetchOne(cmd *cobra.Command, id string) error {
 		return err
 	}
 
+	if getTranslate {
+		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "translating...\n")
+		result, err := translate.Translate(p.Title, p.Abstract)
+		if err != nil {
+			_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "⚠ translation failed: %s\n", err)
+		} else {
+			p.TitleJA = result.Title
+			p.AbstractJA = result.Abstract
+		}
+	}
+
 	if err := paper.Save(p); err != nil {
 		return err
 	}
@@ -88,4 +103,8 @@ func fetchOne(cmd *cobra.Command, id string) error {
 
 	_, _ = fmt.Fprintf(cmd.OutOrStdout(), "✔ added %s  %s\n", p.ID, p.Title)
 	return nil
+}
+
+func init() {
+	getCmd.Flags().BoolVar(&getTranslate, "translate", false, "Translate title and abstract to Japanese")
 }
