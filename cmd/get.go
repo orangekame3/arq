@@ -7,12 +7,16 @@ import (
 	"strings"
 
 	"github.com/orangekame3/arq/internal/arxiv"
+	"github.com/orangekame3/arq/internal/config"
 	"github.com/orangekame3/arq/internal/paper"
 	"github.com/orangekame3/arq/internal/translate"
 	"github.com/spf13/cobra"
 )
 
-var getTranslate bool
+var (
+	getTranslate   bool
+	getNoTranslate bool
+)
 
 var getCmd = &cobra.Command{
 	Use:   "get <id-or-url> [...]",
@@ -81,7 +85,8 @@ func fetchOne(cmd *cobra.Command, id string) error {
 		return err
 	}
 
-	if getTranslate {
+	shouldTranslate := getTranslate || (config.Load().Translate.Enabled && !getNoTranslate)
+	if shouldTranslate {
 		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "translating...\n")
 		result, err := translate.Translate(p.Title, p.Abstract)
 		if err != nil {
@@ -106,5 +111,6 @@ func fetchOne(cmd *cobra.Command, id string) error {
 }
 
 func init() {
-	getCmd.Flags().BoolVar(&getTranslate, "translate", false, "Translate title and abstract to Japanese")
+	getCmd.Flags().BoolVar(&getTranslate, "translate", false, "Translate title and abstract")
+	getCmd.Flags().BoolVar(&getNoTranslate, "no-translate", false, "Skip translation even if enabled in config")
 }

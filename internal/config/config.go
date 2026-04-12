@@ -16,10 +16,11 @@ type Config struct {
 
 // TranslateConfig holds LLM translation settings.
 type TranslateConfig struct {
+	Enabled  bool   `toml:"enabled"`  // auto-translate on get
 	Provider string `toml:"provider"` // "anthropic" or "openai"
-	Model    string `toml:"model"`    // e.g. "claude-haiku-4-5-20251001", "gpt-4o-mini"
+	Model    string `toml:"model"`    // e.g. "gpt-4o-mini", "claude-haiku-4-5-20251001"
+	Lang     string `toml:"lang"`     // target language (default: "Japanese")
 	APIKey   string `toml:"api_key"`  // optional, falls back to env var
-	Lang     string `toml:"lang"`     // target language (default: "ja")
 }
 
 // Path returns the config file path (~/.config/arq/config.toml).
