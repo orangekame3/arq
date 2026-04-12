@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.0.7](https://github.com/orangekame3/arq/compare/v0.0.6...v0.0.7) - 2026-04-12
+- fix(cmd): ensure paper is saved and PDF is downloaded in fetchOne by @orangekame3 in https://github.com/orangekame3/arq/pull/20
+- ci: update Go version to 1.25 in CI workflows and config by @orangekame3 in https://github.com/orangekame3/arq/pull/22
+
 ## [v0.0.6](https://github.com/orangekame3/arq/compare/v0.0.5...v0.0.6) - 2026-04-12
 - feat(config): add auto-translate feature and update configuration options by @orangekame3 in https://github.com/orangekame3/arq/pull/18
 
