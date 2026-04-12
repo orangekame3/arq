@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.10](https://github.com/orangekame3/arq/compare/v0.0.9...v0.0.10) - 2026-04-12
+- feat(cmd): add thumbnail management commands and update paper model by @orangekame3 in https://github.com/orangekame3/arq/pull/28
+
 ## [v0.0.9](https://github.com/orangekame3/arq/compare/v0.0.8...v0.0.9) - 2026-04-12
 - refactor(cmd): remove language option and enhance show output by @orangekame3 in https://github.com/orangekame3/arq/pull/25
 - Release for v0.0.9 by @orangekame3 in https://github.com/orangekame3/arq/pull/26
