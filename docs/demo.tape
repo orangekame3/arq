@@ -1,10 +1,10 @@
-Output demo.gif
+Output docs/demo.gif
 
 Set Shell zsh
 Set FontFamily "BlexMono Nerd Font"
-Set FontSize 18
-Set Width 1800
-Set Height 900
+Set FontSize 16
+Set Width 1400
+Set Height 750
 Set Theme "Catppuccin Mocha"
 Set Padding 30
 Set TypingSpeed 40ms
