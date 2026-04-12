@@ -98,7 +98,41 @@ $ARQ_ROOT/
         meta.json
 ```
 
+## Translation
+
+`arq get --translate` translates the title and abstract to Japanese using an LLM. Supports Anthropic and OpenAI.
+
+```bash
+arq config set translate.provider anthropic
+arq config set translate.api_key sk-ant-xxx
+arq get --translate 2303.12345
+arq show --lang ja 2303.12345
+```
+
+For fzf preview in Japanese:
+
+```bash
+arq list --tsv | fzf --with-nth=2.. --preview 'arq show --lang ja {1}'
+```
+
 ## Configuration
+
+```bash
+arq config                              # show all
+arq config set <key> <value>            # set a value
+arq config get <key>                    # get a value
+arq config setup                        # interactive setup
+```
+
+Available keys:
+
+| Key | Description |
+|---|---|
+| `root` | Paper storage root directory |
+| `translate.provider` | `anthropic` or `openai` |
+| `translate.model` | Model name (default: `gpt-4o-mini` / `claude-haiku-4-5-20251001`) |
+| `translate.lang` | Target language (default: `Japanese`) |
+| `translate.api_key` | API key (or use `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` env var) |
 
 Root directory priority:
 
@@ -106,14 +140,14 @@ Root directory priority:
 2. `~/.config/arq/config.toml`
 3. `~/papers` (default)
 
-```sh
-arq root              # print current root
-arq root ~/papers     # set root
-```
-
 ```toml
 # ~/.config/arq/config.toml
 root = "/Users/you/papers"
+
+[translate]
+provider = "anthropic"
+model = "claude-haiku-4-5-20251001"
+api_key = "sk-ant-xxx"
 ```
 
 ## Acknowledgements

@@ -98,7 +98,41 @@ $ARQ_ROOT/
         meta.json
 ```
 
+## 翻訳
+
+`arq get --translate` で LLM を使ってタイトルとアブストラクトを日本語に翻訳する。Anthropic と OpenAI に対応。
+
+```bash
+arq config set translate.provider anthropic
+arq config set translate.api_key sk-ant-xxx
+arq get --translate 2303.12345
+arq show --lang ja 2303.12345
+```
+
+fzf プレビューで日本語表示:
+
+```bash
+arq list --tsv | fzf --with-nth=2.. --preview 'arq show --lang ja {1}'
+```
+
 ## 設定
+
+```bash
+arq config                              # 全設定を表示
+arq config set <key> <value>            # 値を設定
+arq config get <key>                    # 値を取得
+arq config setup                        # 対話式セットアップ
+```
+
+設定キー:
+
+| キー | 説明 |
+|---|---|
+| `root` | 論文ストレージのルートディレクトリ |
+| `translate.provider` | `anthropic` または `openai` |
+| `translate.model` | モデル名（デフォルト: `gpt-4o-mini` / `claude-haiku-4-5-20251001`） |
+| `translate.lang` | 翻訳先の言語（デフォルト: `Japanese`） |
+| `translate.api_key` | API キー（`OPENAI_API_KEY` / `ANTHROPIC_API_KEY` 環境変数も可） |
 
 root ディレクトリの優先順位:
 
@@ -106,14 +140,14 @@ root ディレクトリの優先順位:
 2. `~/.config/arq/config.toml`
 3. `~/papers`（デフォルト）
 
-```sh
-arq root              # 現在の root を表示
-arq root ~/papers     # root を設定
-```
-
 ```toml
 # ~/.config/arq/config.toml
 root = "/Users/you/papers"
+
+[translate]
+provider = "anthropic"
+model = "claude-haiku-4-5-20251001"
+api_key = "sk-ant-xxx"
 ```
 
 ## Acknowledgements

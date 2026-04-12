@@ -19,6 +19,7 @@ type TranslateConfig struct {
 	Provider string `toml:"provider"` // "anthropic" or "openai"
 	Model    string `toml:"model"`    // e.g. "claude-haiku-4-5-20251001", "gpt-4o-mini"
 	APIKey   string `toml:"api_key"`  // optional, falls back to env var
+	Lang     string `toml:"lang"`     // target language (default: "ja")
 }
 
 // Path returns the config file path (~/.config/arq/config.toml).
