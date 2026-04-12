@@ -25,13 +25,17 @@ arq get 2303.12345
 arq get https://arxiv.org/abs/2303.12345
 arq get 2303.12345 2401.67890       # multiple IDs
 cat ids.txt | arq get -             # batch from stdin
+arq get --force 2303.12345          # re-fetch and overwrite
+arq get --open 2303.12345           # open PDF after download
 
 arq list [--tsv|--json|--id]
-arq show <query> [--json]
+arq show <query> [--json|--lang ja]
 arq path <query>
 arq open <query>
 arq has <id>
 arq select
+arq config
+arq version
 ```
 
 ### fzf integration
@@ -57,14 +61,14 @@ Add to `.zshrc` / `.bashrc`:
 # Open a paper with fzf preview
 arqo() {
   local id
-  id=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}' | cut -f1)
+  id=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show --lang ja {1}' | cut -f1)
   [ -n "$id" ] && arq open "$id"
 }
 
 # cd to a paper directory
 arqd() {
   local path
-  path=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}' | cut -f1)
+  path=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show --lang ja {1}' | cut -f1)
   [ -n "$path" ] && cd "$(dirname "$(arq path "$path")")"
 }
 ```
