@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/charmbracelet/log"
 	"github.com/orangekame3/arq/internal/arxiv"
 	"github.com/orangekame3/arq/internal/config"
 	"github.com/orangekame3/arq/internal/paper"
@@ -75,44 +76,49 @@ func collectIDs(args []string) ([]string, error) {
 }
 
 func fetchOne(cmd *cobra.Command, id string) error {
+	logger := log.New(cmd.ErrOrStderr())
+
 	if existing, err := paper.FindByID(id); err == nil {
 		if !getForce {
-			_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "already exists: %s (use --force to re-fetch)\n", id)
+			logger.Warn("already exists", "id", id, "hint", "use --force to re-fetch")
 			return nil
 		}
-		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "overwriting %s...\n", existing.ID)
+		logger.Info("overwriting", "id", existing.ID)
 	}
 
-	_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "fetching %s...\n", id)
+	logger.Info("fetching metadata", "id", id)
 
 	p, err := arxiv.Fetch(id)
 	if err != nil {
 		return err
 	}
 
+	logger.Info("found", "title", p.Title, "category", p.Category)
+
 	if err := paper.Save(p); err != nil {
 		return err
 	}
 
-	_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "downloading PDF...\n")
+	logger.Info("downloading PDF", "id", id)
 	if err := arxiv.DownloadPDF(p); err != nil {
 		return err
 	}
 
 	shouldTranslate := getTranslate || (config.Load().Translate.Enabled && !getNoTranslate)
 	if shouldTranslate {
-		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "translating...\n")
+		logger.Info("translating", "id", id)
 		result, err := translate.Translate(p.Title, p.Abstract)
 		if err != nil {
-			_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "⚠ translation failed: %s\n", err)
+			logger.Warn("translation failed", "error", err)
 		} else {
 			p.TitleJA = result.Title
 			p.AbstractJA = result.Abstract
 			_ = paper.Save(p)
+			logger.Info("translated", "title_ja", p.TitleJA)
 		}
 	}
 
-	_, _ = fmt.Fprintf(cmd.OutOrStdout(), "✔ added %s  %s\n", p.ID, p.Title)
+	logger.Info("added", "id", p.ID, "path", paper.Dir(p))
 
 	if getOpen {
 		_ = openFile(paper.PDFPath(p))

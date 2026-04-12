@@ -2,7 +2,12 @@
 
 [日本語](README.ja.md)
 
+> [!WARNING]
+> This project is experimental. Breaking changes may occur without notice.
+
 [ghq](https://github.com/x-motemen/ghq) for arXiv papers — manage local paper copies and explore them with fzf.
+
+![demo](docs/demo.gif)
 
 ## Install
 
@@ -34,6 +39,7 @@ arq path <query>
 arq open <query>
 arq has <id>
 arq select
+arq remove <query>                 # remove a paper (alias: rm)
 arq thumbnail set <query> <image>  # set thumbnail
 arq thumbnail path <query>         # get thumbnail path
 arq config
@@ -116,11 +122,7 @@ arq get --no-translate 2303.12345       # skip for this one
 arq show 2303.12345                    # shows both en and ja
 ```
 
-For fzf preview in Japanese:
-
-```bash
-arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}'
-```
+When a thumbnail is set, `arq show` displays it in terminals that support the Kitty graphics protocol (e.g. Ghostty, Kitty).
 
 ## Configuration
 

@@ -2,7 +2,12 @@
 
 [English](README.md)
 
+> [!WARNING]
+> このプロジェクトは実験的です。予告なく破壊的変更が行われる可能性があります。
+
 arXiv 論文版の [ghq](https://github.com/x-motemen/ghq) — 論文をローカル管理し、fzf で高速に探索する。
+
+![demo](docs/demo.gif)
 
 ## インストール
 
@@ -34,6 +39,7 @@ arq path <query>
 arq open <query>
 arq has <id>
 arq select
+arq remove <query>                 # 論文を削除 (alias: rm)
 arq thumbnail set <query> <image>  # サムネイル設定
 arq thumbnail path <query>         # サムネイルパス取得
 arq config
@@ -116,11 +122,7 @@ arq get --no-translate 2303.12345       # 今回だけスキップ
 arq show 2303.12345                    # 英語・日本語の両方を表示
 ```
 
-fzf プレビューで日本語表示:
-
-```bash
-arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}'
-```
+サムネイルが設定されている場合、`arq show` は Kitty graphics protocol 対応ターミナル（Ghostty, Kitty 等）で画像を表示する。
 
 ## 設定
 
