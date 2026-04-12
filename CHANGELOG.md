@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.5](https://github.com/orangekame3/arq/compare/v0.0.4...v0.0.5) - 2026-04-12
+- feat(config): add translation configuration and update commands by @orangekame3 in https://github.com/orangekame3/arq/pull/16
+
 ## [v0.0.4](https://github.com/orangekame3/arq/compare/v0.0.3...v0.0.4) - 2026-04-12
 - feat(cmd): add translation feature for titles and abstracts by @orangekame3 in https://github.com/orangekame3/arq/pull/14
 
