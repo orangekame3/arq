@@ -85,6 +85,15 @@ func fetchOne(cmd *cobra.Command, id string) error {
 		return err
 	}
 
+	if err := paper.Save(p); err != nil {
+		return err
+	}
+
+	_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "downloading PDF...\n")
+	if err := arxiv.DownloadPDF(p); err != nil {
+		return err
+	}
+
 	shouldTranslate := getTranslate || (config.Load().Translate.Enabled && !getNoTranslate)
 	if shouldTranslate {
 		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "translating...\n")
@@ -94,16 +103,8 @@ func fetchOne(cmd *cobra.Command, id string) error {
 		} else {
 			p.TitleJA = result.Title
 			p.AbstractJA = result.Abstract
+			_ = paper.Save(p)
 		}
-	}
-
-	if err := paper.Save(p); err != nil {
-		return err
-	}
-
-	_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "downloading PDF...\n")
-	if err := arxiv.DownloadPDF(p); err != nil {
-		return err
 	}
 
 	_, _ = fmt.Fprintf(cmd.OutOrStdout(), "✔ added %s  %s\n", p.ID, p.Title)
