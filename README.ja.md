@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-fzf で探索するためのローカル arXiv 論文インデックス。
+arXiv 論文版の [ghq](https://github.com/x-motemen/ghq) — 論文をローカル管理し、fzf で高速に探索する。
 
 ## インストール
 
@@ -72,7 +72,15 @@ arqd() {
 
 ## ディレクトリ構造
 
-ghq ライクにホスト・カテゴリでディレクトリを切る。カテゴリは arXiv の primary_category から自動判定。
+ghq がリポジトリを `<root>/<host>/<owner>/<repo>` で管理するように、arq は論文を `<root>/<host>/<category>/<id>` で管理する。カテゴリは arXiv の primary_category から自動判定。
+
+```bash
+# ghq
+~/src/github.com/orangekame3/arq/
+
+# arq
+~/papers/arxiv.org/quant-ph/2303.12345/paper.pdf
+```
 
 ```bash
 $ARQ_ROOT/
@@ -105,6 +113,10 @@ arq root ~/papers     # root を設定
 root = "/Users/you/papers"
 ```
 
+## Acknowledgements
+
+arq は [@motemen](https://github.com/motemen) 氏の [ghq](https://github.com/x-motemen/ghq) にインスパイアされています。パス中心の設計、ホストベースのディレクトリ構造、fzf を前提としたワークフローは ghq の設計思想に大きく影響を受けています。
+
 ## ライセンス
 
-MIT
+[MIT](LICENSE)

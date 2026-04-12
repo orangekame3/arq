@@ -2,7 +2,7 @@
 
 [日本語](README.ja.md)
 
-Local arXiv paper index for fzf-driven exploration.
+[ghq](https://github.com/x-motemen/ghq) for arXiv papers — manage local paper copies and explore them with fzf.
 
 ## Install
 
@@ -72,7 +72,15 @@ arqd() {
 
 ## Directory structure
 
-Directories are organized by host and category, similar to ghq. The category is automatically determined from the arXiv primary_category.
+Like ghq organizes repos under `<root>/<host>/<owner>/<repo>`, arq organizes papers under `<root>/<host>/<category>/<id>`. The category is automatically determined from the arXiv primary_category.
+
+```bash
+# ghq
+~/src/github.com/orangekame3/arq/
+
+# arq
+~/papers/arxiv.org/quant-ph/2303.12345/paper.pdf
+```
 
 ```bash
 $ARQ_ROOT/
@@ -105,6 +113,10 @@ arq root ~/papers     # set root
 root = "/Users/you/papers"
 ```
 
+## Acknowledgements
+
+arq is inspired by [ghq](https://github.com/x-motemen/ghq) by [@motemen](https://github.com/motemen). The path-centric, host-based directory structure and the fzf-first workflow are directly influenced by ghq's design philosophy.
+
 ## License
 
-MIT
+[MIT](LICENSE)
