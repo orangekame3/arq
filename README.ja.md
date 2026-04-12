@@ -84,12 +84,17 @@ $ARQ_ROOT/
 root ディレクトリの優先順位:
 
 1. `$ARQ_ROOT`
-2. `~/.config/arq/config.json`
+2. `~/.config/arq/config.toml`
 3. `~/papers`（デフォルト）
 
 ```sh
 arq root              # 現在の root を表示
 arq root ~/papers     # root を設定
+```
+
+```toml
+# ~/.config/arq/config.toml
+root = "/Users/you/papers"
 ```
 
 ## ライセンス
