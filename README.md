@@ -29,7 +29,7 @@ arq get --force 2303.12345          # re-fetch and overwrite
 arq get --open 2303.12345           # open PDF after download
 
 arq list [--tsv|--json|--id]
-arq show <query> [--json|--lang ja]
+arq show <query> [--json]
 arq path <query>
 arq open <query>
 arq has <id>
@@ -61,14 +61,14 @@ Add to `.zshrc` / `.bashrc`:
 # Open a paper with fzf preview
 arqo() {
   local id
-  id=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show --lang ja {1}' | cut -f1)
+  id=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}' | cut -f1)
   [ -n "$id" ] && arq open "$id"
 }
 
 # cd to a paper directory
 arqd() {
   local path
-  path=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show --lang ja {1}' | cut -f1)
+  path=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}' | cut -f1)
   [ -n "$path" ] && cd "$(dirname "$(arq path "$path")")"
 }
 ```
@@ -111,13 +111,13 @@ arq config set translate.enabled true
 arq config set translate.api_key sk-xxx
 arq get 2303.12345                      # auto-translates
 arq get --no-translate 2303.12345       # skip for this one
-arq show --lang ja 2303.12345
+arq show 2303.12345                    # shows both en and ja
 ```
 
 For fzf preview in Japanese:
 
 ```bash
-arq list --tsv | fzf --with-nth=2.. --preview 'arq show --lang ja {1}'
+arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}'
 ```
 
 ## Configuration

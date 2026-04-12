@@ -9,10 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	showJSON bool
-	showLang string
-)
+var showJSON bool
 
 var showCmd = &cobra.Command{
 	Use:   "show <query>",
@@ -22,17 +19,6 @@ var showCmd = &cobra.Command{
 		p, err := query.Resolve(args[0])
 		if err != nil {
 			return err
-		}
-
-		title := p.Title
-		abstract := p.Abstract
-		if showLang == "ja" {
-			if p.TitleJA != "" {
-				title = p.TitleJA
-			}
-			if p.AbstractJA != "" {
-				abstract = p.AbstractJA
-			}
 		}
 
 		if showJSON {
@@ -65,17 +51,26 @@ var showCmd = &cobra.Command{
 		}
 
 		w := cmd.OutOrStdout()
-		_, _ = fmt.Fprintf(w, "Title:     %s\n", title)
+		_, _ = fmt.Fprintf(w, "Title:     %s\n", p.Title)
+		if p.TitleJA != "" {
+			_, _ = fmt.Fprintf(w, "Title(ja): %s\n", p.TitleJA)
+		}
 		_, _ = fmt.Fprintf(w, "Authors:   %s\n", p.AuthorShort())
 		_, _ = fmt.Fprintf(w, "Published: %s\n", p.Published)
 		_, _ = fmt.Fprintf(w, "Category:  %s\n", p.Category)
-		_, _ = fmt.Fprintf(w, "Abstract:\n%s\n", abstract)
 		_, _ = fmt.Fprintf(w, "Path:      %s\n", paper.PDFPath(p))
+		_, _ = fmt.Fprintln(w, "")
+		_, _ = fmt.Fprintln(w, "--- Abstract ---")
+		_, _ = fmt.Fprintln(w, p.Abstract)
+		if p.AbstractJA != "" {
+			_, _ = fmt.Fprintln(w, "")
+			_, _ = fmt.Fprintln(w, "--- Abstract (ja) ---")
+			_, _ = fmt.Fprintln(w, p.AbstractJA)
+		}
 		return nil
 	},
 }
 
 func init() {
 	showCmd.Flags().BoolVar(&showJSON, "json", false, "Output in JSON format")
-	showCmd.Flags().StringVar(&showLang, "lang", "en", "Language for title and abstract (en, ja)")
 }
