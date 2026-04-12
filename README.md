@@ -84,12 +84,17 @@ $ARQ_ROOT/
 Root directory priority:
 
 1. `$ARQ_ROOT`
-2. `~/.config/arq/config.json`
+2. `~/.config/arq/config.toml`
 3. `~/papers` (default)
 
 ```sh
 arq root              # print current root
 arq root ~/papers     # set root
+```
+
+```toml
+# ~/.config/arq/config.toml
+root = "/Users/you/papers"
 ```
 
 ## License

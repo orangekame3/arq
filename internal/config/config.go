@@ -1,33 +1,31 @@
 package config
 
 import (
-	"encoding/json"
+	"bytes"
 	"os"
 	"path/filepath"
+
+	"github.com/BurntSushi/toml"
 )
 
 // Config holds arq configuration.
 type Config struct {
-	Root string `json:"root"`
+	Root string `toml:"root"`
 }
 
-// Path returns the config file path (~/.config/arq/config.json).
+// Path returns the config file path (~/.config/arq/config.toml).
 func Path() string {
 	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
-		return filepath.Join(xdg, "arq", "config.json")
+		return filepath.Join(xdg, "arq", "config.toml")
 	}
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".config", "arq", "config.json")
+	return filepath.Join(home, ".config", "arq", "config.toml")
 }
 
 // Load reads the config file. Returns zero-value Config if not found.
 func Load() Config {
-	data, err := os.ReadFile(Path())
-	if err != nil {
-		return Config{}
-	}
 	var c Config
-	_ = json.Unmarshal(data, &c)
+	_, _ = toml.DecodeFile(Path(), &c)
 	return c
 }
 
@@ -37,9 +35,9 @@ func Save(c Config) error {
 	if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
 		return err
 	}
-	data, err := json.MarshalIndent(c, "", "  ")
-	if err != nil {
+	var buf bytes.Buffer
+	if err := toml.NewEncoder(&buf).Encode(c); err != nil {
 		return err
 	}
-	return os.WriteFile(p, data, 0o644)
+	return os.WriteFile(p, buf.Bytes(), 0o644)
 }
