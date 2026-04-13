@@ -26,5 +26,6 @@ func init() {
 	rootCmd.AddCommand(removeCmd)
 	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(thumbnailCmd)
+	rootCmd.AddCommand(summarizeCmd)
 	rootCmd.AddCommand(versionCmd)
 }
