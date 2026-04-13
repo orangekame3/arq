@@ -38,9 +38,12 @@ arq get --summarize 2303.12345      # 図表付き要約を生成
 arq list [--tsv|--json|--id]
 arq show <query> [--json|--summary]
 arq summarize <query> [--force]    # 要約を生成/再生成 (alias: sum)
+arq summarize --all [--force]      # 全論文を一括要約
+arq search <keyword> [keyword...]  # ローカル論文を検索
 arq path <query>
 arq open <query>
-arq has <id>
+arq has <id> [...]                 # 1つ以上のIDを存在チェック
+arq has -                          # stdin からIDを読み込んでチェック
 arq select
 arq remove <query>                 # 論文を削除 (alias: rm)
 arq thumbnail set <query> <image>  # サムネイル設定
@@ -131,6 +134,8 @@ LLM を使って論文のマークダウン要約を生成する。[ar5iv](https
 ```bash
 arq summarize 2303.12345              # 要約を生成
 arq summarize --force 2303.12345      # 再生成
+arq summarize --all                   # 要約がない全論文を一括要約
+arq summarize --all --force           # 全論文の要約を再生成
 arq show 2303.12345                   # glamour で要約をレンダリング表示
 arq show --summary 2303.12345         # 要約のみ表示
 ```
@@ -159,6 +164,38 @@ prompt = """You are a quantum computing expert. Analyze the following paper in {
 ```
 
 `{{lang}}` プレースホルダは実行時に設定言語に置換される。
+
+## 検索
+
+ローカルに保存された論文のタイトル・アブストラクト・要約を横断検索する。
+
+```bash
+arq search "surface code"                     # 全フィールドを検索
+arq search "quantum" "calibration"            # AND 検索（全キーワードが一致する必要あり）
+arq search --field summary "decoder"          # 要約のみ検索
+arq search --field title "transmon"           # タイトルのみ検索
+arq search --json "surface code"              # JSON 出力
+arq search --id "surface code"               # ID のみ出力（パイプ用）
+```
+
+他のコマンドと組み合わせ:
+
+```bash
+arq search --id "calibration" | arq get -     # 一致する論文を再取得
+arq show "$(arq search --id "decoder" | head -1)"
+```
+
+## 一括存在チェック
+
+複数の論文を一度にチェックする。バッチモードでは、見つかった ID が stdout に出力される。
+
+```bash
+arq has 2303.12345 2401.67890          # 複数ID を一度にチェック
+cat ids.txt | arq has -                # stdin から読み込んでチェック
+arq has 2303.12345                     # 単一ID: exit 0/1、出力なし
+```
+
+全 ID が見つかれば exit 0、1つでも見つからなければ exit 1。
 
 ## 翻訳
 

@@ -16,10 +16,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var summarizeForce bool
+var (
+	summarizeForce bool
+	summarizeAll   bool
+)
 
 var summarizeCmd = &cobra.Command{
-	Use:     "summarize <query>",
+	Use:     "summarize [query]",
 	Aliases: []string{"sum"},
 	Short:   "Generate a markdown summary of a paper",
 	Long: `Generate a markdown summary of a paper using an LLM.
@@ -28,77 +31,124 @@ Fetches the paper's HTML from ar5iv for full-text analysis.
 Falls back to abstract-based summary if ar5iv is unavailable.
 Downloads figures to the paper's assets/ directory.
 
+Use --all to summarize all papers without an existing summary.
+
 Configure the LLM provider in config:
   [summarize]
   provider = "anthropic"   # or "openai" (falls back to [translate] settings)
   model = "claude-sonnet-4-5-20241022"
   lang = "Japanese"`,
-	Args: cobra.ExactArgs(1),
+	Args: cobra.ArbitraryArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger := log.New(cmd.ErrOrStderr())
+
+		if summarizeAll && len(args) > 0 {
+			return fmt.Errorf("--all and positional arguments are mutually exclusive")
+		}
+		if !summarizeAll && len(args) == 0 {
+			return fmt.Errorf("requires a query argument or --all flag")
+		}
+
+		if summarizeAll {
+			return summarizeAllPapers(logger)
+		}
 
 		p, err := query.Resolve(args[0])
 		if err != nil {
 			return err
 		}
+		return summarizePaper(logger, p)
+	},
+}
 
+func summarizePaper(logger *log.Logger, p *paper.Paper) error {
+	summaryPath := paper.SummaryPath(p)
+	if !summarizeForce {
+		if _, err := os.Stat(summaryPath); err == nil {
+			logger.Warn("summary already exists", "path", summaryPath, "hint", "use --force to regenerate")
+			return nil
+		}
+	}
+
+	// Try ar5iv first, fall back to abstract
+	var markdown string
+	var figures []ar5iv.Figure
+
+	logger.Info("fetching ar5iv HTML", "id", p.ID)
+	content, err := ar5iv.Fetch(p.ID)
+	if err != nil {
+		logger.Warn("ar5iv unavailable, using abstract", "error", err)
+		logger.Info("summarizing from abstract", "id", p.ID)
+		markdown, err = summarize.SummarizeAbstract(p.Title, p.Abstract)
+		if err != nil {
+			return fmt.Errorf("summarize: %w", err)
+		}
+	} else {
+		figures = content.Figures
+		logger.Info("summarizing", "id", p.ID, "sections", len(content.Sections), "figures", len(figures))
+		markdown, err = summarize.Summarize(content)
+		if err != nil {
+			return fmt.Errorf("summarize: %w", err)
+		}
+	}
+
+	// Build final summary.md with metadata header
+	var sb strings.Builder
+	fmt.Fprintf(&sb, "# %s\n\n", p.Title)
+	fmt.Fprintf(&sb, "- **Authors**: %s\n", strings.Join(p.Authors, ", "))
+	fmt.Fprintf(&sb, "- **Published**: %s\n", p.Published)
+	fmt.Fprintf(&sb, "- **Category**: %s\n", p.Category)
+	fmt.Fprintf(&sb, "- **arXiv**: https://arxiv.org/abs/%s\n", p.ID)
+	fmt.Fprintf(&sb, "- **PDF**: %s\n", p.PDFURL)
+	sb.WriteString("\n---\n\n")
+	sb.WriteString(markdown)
+	sb.WriteString("\n")
+
+	if err := os.WriteFile(summaryPath, []byte(sb.String()), 0o644); err != nil {
+		return fmt.Errorf("write summary: %w", err)
+	}
+	logger.Info("saved summary", "path", summaryPath)
+
+	// Download figures
+	if len(figures) > 0 {
+		downloaded := downloadFigures(logger, p, figures)
+		if downloaded > 0 {
+			logger.Info("downloaded figures", "count", downloaded)
+		}
+	}
+
+	return nil
+}
+
+func summarizeAllPapers(logger *log.Logger) error {
+	papers, err := paper.List()
+	if err != nil {
+		return err
+	}
+
+	var summarized, skipped, failed int
+	total := len(papers)
+
+	for i, p := range papers {
 		summaryPath := paper.SummaryPath(p)
 		if !summarizeForce {
 			if _, err := os.Stat(summaryPath); err == nil {
-				logger.Warn("summary already exists", "path", summaryPath, "hint", "use --force to regenerate")
-				return nil
+				skipped++
+				continue
 			}
 		}
 
-		// Try ar5iv first, fall back to abstract
-		var markdown string
-		var figures []ar5iv.Figure
-
-		logger.Info("fetching ar5iv HTML", "id", p.ID)
-		content, err := ar5iv.Fetch(p.ID)
-		if err != nil {
-			logger.Warn("ar5iv unavailable, using abstract", "error", err)
-			logger.Info("summarizing from abstract", "id", p.ID)
-			markdown, err = summarize.SummarizeAbstract(p.Title, p.Abstract)
-			if err != nil {
-				return fmt.Errorf("summarize: %w", err)
-			}
+		logger.Info("summarizing", "progress", fmt.Sprintf("%d/%d", i+1, total), "id", p.ID)
+		if err := summarizePaper(logger, p); err != nil {
+			logger.Warn("failed", "id", p.ID, "error", err)
+			failed++
 		} else {
-			figures = content.Figures
-			logger.Info("summarizing", "id", p.ID, "sections", len(content.Sections), "figures", len(figures))
-			markdown, err = summarize.Summarize(content)
-			if err != nil {
-				return fmt.Errorf("summarize: %w", err)
-			}
+			summarized++
 		}
+	}
 
-		// Build final summary.md with metadata header
-		var sb strings.Builder
-		fmt.Fprintf(&sb, "# %s\n\n", p.Title)
-		fmt.Fprintf(&sb, "- **Authors**: %s\n", strings.Join(p.Authors, ", "))
-		fmt.Fprintf(&sb, "- **Published**: %s\n", p.Published)
-		fmt.Fprintf(&sb, "- **Category**: %s\n", p.Category)
-		fmt.Fprintf(&sb, "- **arXiv**: https://arxiv.org/abs/%s\n", p.ID)
-		fmt.Fprintf(&sb, "- **PDF**: %s\n", p.PDFURL)
-		sb.WriteString("\n---\n\n")
-		sb.WriteString(markdown)
-		sb.WriteString("\n")
-
-		if err := os.WriteFile(summaryPath, []byte(sb.String()), 0o644); err != nil {
-			return fmt.Errorf("write summary: %w", err)
-		}
-		logger.Info("saved summary", "path", summaryPath)
-
-		// Download figures
-		if len(figures) > 0 {
-			downloaded := downloadFigures(logger, p, figures)
-			if downloaded > 0 {
-				logger.Info("downloaded figures", "count", downloaded)
-			}
-		}
-
-		return nil
-	},
+	logger.Info("done", "summarized", summarized, "skipped", skipped, "failed", failed)
+	return nil
 }
 
 func downloadFigures(logger *log.Logger, p *paper.Paper, figures []ar5iv.Figure) int {
@@ -149,4 +199,5 @@ func downloadFigures(logger *log.Logger, p *paper.Paper, figures []ar5iv.Figure)
 
 func init() {
 	summarizeCmd.Flags().BoolVar(&summarizeForce, "force", false, "Regenerate summary even if it already exists")
+	summarizeCmd.Flags().BoolVar(&summarizeAll, "all", false, "Summarize all papers without an existing summary")
 }

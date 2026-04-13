@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -100,20 +101,28 @@ func printTable(cmd *cobra.Command, papers []*paper.Paper) error {
 }
 
 type listEntry struct {
-	ID        string   `json:"id"`
-	Title     string   `json:"title"`
-	Authors   []string `json:"authors"`
-	Published string   `json:"published"`
+	ID         string   `json:"id"`
+	Title      string   `json:"title"`
+	Authors    []string `json:"authors"`
+	Published  string   `json:"published"`
+	HasSummary bool     `json:"has_summary"`
 }
 
 func printJSON(cmd *cobra.Command, papers []*paper.Paper) error {
 	entries := make([]listEntry, len(papers))
 	for i, p := range papers {
+		hasSummary := false
+		if sp := paper.SummaryPath(p); sp != "" {
+			if _, err := os.Stat(sp); err == nil {
+				hasSummary = true
+			}
+		}
 		entries[i] = listEntry{
-			ID:        p.ID,
-			Title:     p.Title,
-			Authors:   p.Authors,
-			Published: p.Published,
+			ID:         p.ID,
+			Title:      p.Title,
+			Authors:    p.Authors,
+			Published:  p.Published,
+			HasSummary: hasSummary,
 		}
 	}
 	enc := json.NewEncoder(cmd.OutOrStdout())

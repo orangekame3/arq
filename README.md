@@ -38,9 +38,12 @@ arq get --summarize 2303.12345      # generate summary with figures
 arq list [--tsv|--json|--id]
 arq show <query> [--json|--summary]
 arq summarize <query> [--force]    # generate/regenerate summary (alias: sum)
+arq summarize --all [--force]      # summarize all papers at once
+arq search <keyword> [keyword...]  # search locally stored papers
 arq path <query>
 arq open <query>
-arq has <id>
+arq has <id> [...]                 # check one or more IDs
+arq has -                          # check IDs from stdin
 arq select
 arq remove <query>                 # remove a paper (alias: rm)
 arq thumbnail set <query> <image>  # set thumbnail
@@ -131,6 +134,8 @@ Generate markdown summaries of papers using LLMs. Fetches full-text HTML from [a
 ```bash
 arq summarize 2303.12345              # generate summary
 arq summarize --force 2303.12345      # regenerate
+arq summarize --all                   # summarize all papers without a summary
+arq summarize --all --force           # regenerate all summaries
 arq show 2303.12345                   # shows summary with glamour rendering
 arq show --summary 2303.12345         # summary only
 ```
@@ -159,6 +164,38 @@ prompt = """You are a quantum computing expert. Analyze the following paper in {
 ```
 
 The `{{lang}}` placeholder is replaced with the configured language at runtime.
+
+## Search
+
+Search across titles, abstracts, and summaries of locally stored papers.
+
+```bash
+arq search "surface code"                     # search all fields
+arq search "quantum" "calibration"            # AND search (all keywords must match)
+arq search --field summary "decoder"          # search only in summaries
+arq search --field title "transmon"           # search only in titles
+arq search --json "surface code"              # JSON output
+arq search --id "surface code"               # ID-only output (for piping)
+```
+
+Combine with other commands:
+
+```bash
+arq search --id "calibration" | arq get -     # re-fetch matching papers
+arq show "$(arq search --id "decoder" | head -1)"
+```
+
+## Batch existence check
+
+Check multiple papers at once. In batch mode, found IDs are printed to stdout.
+
+```bash
+arq has 2303.12345 2401.67890          # check multiple IDs
+cat ids.txt | arq has -                # check from stdin
+arq has 2303.12345                     # single ID: exit 0/1, no output
+```
+
+Exit code is 0 if all IDs are found, 1 if any are missing.
 
 ## Translation
 
