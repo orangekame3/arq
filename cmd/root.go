@@ -28,5 +28,6 @@ func init() {
 	rootCmd.AddCommand(thumbnailCmd)
 	rootCmd.AddCommand(summarizeCmd)
 	rootCmd.AddCommand(searchCmd)
+	rootCmd.AddCommand(viewCmd)
 	rootCmd.AddCommand(versionCmd)
 }
