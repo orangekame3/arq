@@ -6,7 +6,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "arq",
-	Short: "Local arXiv paper index for fzf-driven exploration",
+	Short: "Manage arXiv papers in your terminal",
 }
 
 // Execute runs the root command.
@@ -26,5 +26,6 @@ func init() {
 	rootCmd.AddCommand(removeCmd)
 	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(thumbnailCmd)
+	rootCmd.AddCommand(summarizeCmd)
 	rootCmd.AddCommand(versionCmd)
 }

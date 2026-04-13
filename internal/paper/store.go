@@ -46,6 +46,16 @@ func ThumbnailPath(p *Paper) string {
 	return filepath.Join(Dir(p), p.Thumbnail)
 }
 
+// SummaryPath returns the summary.md path for a given paper.
+func SummaryPath(p *Paper) string {
+	return filepath.Join(Dir(p), "summary.md")
+}
+
+// AssetsDir returns the assets directory for a given paper.
+func AssetsDir(p *Paper) string {
+	return filepath.Join(Dir(p), "assets")
+}
+
 // Save writes the paper metadata and ensures the directory exists.
 func Save(p *Paper) error {
 	dir := Dir(p)

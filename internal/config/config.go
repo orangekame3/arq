@@ -12,15 +12,40 @@ import (
 type Config struct {
 	Root      string          `toml:"root"`
 	Translate TranslateConfig `toml:"translate"`
+	Summarize SummarizeConfig `toml:"summarize"`
 }
 
 // TranslateConfig holds LLM translation settings.
 type TranslateConfig struct {
 	Enabled  bool   `toml:"enabled"`  // auto-translate on get
-	Provider string `toml:"provider"` // "anthropic" or "openai"
+	Provider string `toml:"provider"` // "anthropic", "openai", or "openrouter"
 	Model    string `toml:"model"`    // e.g. "gpt-4o-mini", "claude-haiku-4-5-20251001"
 	Lang     string `toml:"lang"`     // target language (default: "Japanese")
 	APIKey   string `toml:"api_key"`  // optional, falls back to env var
+}
+
+// SummarizeConfig holds LLM summarization settings.
+// Falls back to TranslateConfig values for provider, api_key, and lang if not set.
+type SummarizeConfig struct {
+	Enabled  bool   `toml:"enabled"`  // auto-summarize on get
+	Provider string `toml:"provider"` // "anthropic", "openai", or "openrouter"
+	Model    string `toml:"model"`    // e.g. "gpt-4o", "claude-sonnet-4-5-20241022"
+	Lang     string `toml:"lang"`     // target language (falls back to translate.lang)
+	APIKey   string `toml:"api_key"`  // optional, falls back to translate.api_key
+	Prompt   string `toml:"prompt"`   // custom instruction prompt (overrides default)
+}
+
+// ValidProviders lists all supported LLM providers.
+var ValidProviders = []string{"openai", "anthropic", "openrouter"}
+
+// IsValidProvider checks if a provider name is supported.
+func IsValidProvider(p string) bool {
+	for _, v := range ValidProviders {
+		if v == p {
+			return true
+		}
+	}
+	return false
 }
 
 // Path returns the config file path (~/.config/arq/config.toml).

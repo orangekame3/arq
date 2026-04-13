@@ -10,30 +10,110 @@ Set Padding 30
 Set TypingSpeed 40ms
 Set CursorBlink false
 
-# Fetch a paper
+# Fetch a paper (with auto-summarize enabled)
 Type "arq get 2107.13175"
 Enter
-Sleep 6s
-Sleep 2s
+Sleep 26s
 
 # List papers in table format
 Type "arq list"
 Enter
 Sleep 3.5s
 
-# Clear and show paper details
-Type "clear"
-Enter
-Sleep 0.5s
+# Show paper details in viewport pager
 Type "arq show 2107.13175"
 Enter
-Sleep 4s
+Sleep 2s
 
-# Clear and fzf integration
-Type "clear"
-Enter
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 0.2s
+Type "j"
+Sleep 1s
+
+# Scroll back up with k
+Type "k"
+Sleep 0.2s
+Type "k"
+Sleep 0.2s
+Type "k"
+Sleep 0.2s
+Type "k"
+Sleep 0.2s
+Type "k"
+Sleep 0.2s
+Type "k"
+Sleep 0.2s
+Type "k"
+Sleep 0.2s
+Type "k"
+Sleep 0.2s
+Type "k"
+Sleep 0.2s
+Type "k"
+Sleep 1s
+
+# Quit pager
+Type "q"
 Sleep 0.5s
-Type "arq list --tsv | fzf --with-nth=2.. --preview 'CLICOLOR_FORCE=1 arq show {1}' --preview-window=right:50%:wrap --ansi"
+
+# fzf with preview
+Type "arq list --tsv | fzf --with-nth=2.. --preview 'CLICOLOR_FORCE=1 arq show {1}' --preview-window=right:55%:wrap --ansi"
 Enter
 Sleep 2s
 
