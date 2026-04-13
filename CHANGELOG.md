@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.0.12](https://github.com/orangekame3/arq/compare/v0.0.11...v0.0.12) - 2026-04-13
+- feat(summarize): add LLM-based summarization for academic papers by @orangekame3 in https://github.com/orangekame3/arq/pull/35
+- ci: update setup-go action to v6 in CI workflows by @orangekame3 in https://github.com/orangekame3/arq/pull/37
+
 ## [v0.0.11](https://github.com/orangekame3/arq/compare/v0.0.10...v0.0.11) - 2026-04-12
 - feat(cmd): add remove command to delete papers from local storage by @orangekame3 in https://github.com/orangekame3/arq/pull/30
 
