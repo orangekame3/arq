@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.13](https://github.com/orangekame3/arq/compare/v0.0.12...v0.0.13) - 2026-04-13
+- feat(cmd): add search and batch existence check commands by @orangekame3 in https://github.com/orangekame3/arq/pull/39
+
 ## [v0.0.12](https://github.com/orangekame3/arq/compare/v0.0.11...v0.0.12) - 2026-04-13
 - feat(summarize): add LLM-based summarization for academic papers by @orangekame3 in https://github.com/orangekame3/arq/pull/35
 - ci: update setup-go action to v6 in CI workflows by @orangekame3 in https://github.com/orangekame3/arq/pull/37
