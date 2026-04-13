@@ -44,18 +44,20 @@ var showCmd = &cobra.Command{
 
 		if showJSON {
 			type showEntry struct {
-				ID         string   `json:"id"`
-				Title      string   `json:"title"`
-				TitleJA    string   `json:"title_ja,omitempty"`
-				Authors    []string `json:"authors"`
-				Abstract   string   `json:"abstract"`
-				AbstractJA string   `json:"abstract_ja,omitempty"`
-				Published  string   `json:"published"`
-				Category   string   `json:"category"`
-				PDFURL     string   `json:"pdf_url"`
-				Path       string   `json:"path"`
-				Thumbnail  string   `json:"thumbnail,omitempty"`
-				Summary    string   `json:"summary,omitempty"`
+				ID          string   `json:"id"`
+				Title       string   `json:"title"`
+				TitleJA     string   `json:"title_ja,omitempty"`
+				Authors     []string `json:"authors"`
+				Abstract    string   `json:"abstract"`
+				AbstractJA  string   `json:"abstract_ja,omitempty"`
+				Published   string   `json:"published"`
+				Category    string   `json:"category"`
+				PDFURL      string   `json:"pdf_url"`
+				Path        string   `json:"path"`
+				Thumbnail   string   `json:"thumbnail,omitempty"`
+				HasSummary  bool     `json:"has_summary"`
+				SummaryPath string   `json:"summary_path,omitempty"`
+				Summary     string   `json:"summary,omitempty"`
 			}
 			entry := showEntry{
 				ID:         p.ID,
@@ -70,9 +72,13 @@ var showCmd = &cobra.Command{
 				Path:       paper.PDFPath(p),
 				Thumbnail:  paper.ThumbnailPath(p),
 			}
-			if summaryPath := paper.SummaryPath(p); summaryPath != "" {
-				if data, err := os.ReadFile(summaryPath); err == nil {
-					entry.Summary = string(data)
+			if sp := paper.SummaryPath(p); sp != "" {
+				if _, err := os.Stat(sp); err == nil {
+					entry.HasSummary = true
+					entry.SummaryPath = sp
+					if data, err := os.ReadFile(sp); err == nil {
+						entry.Summary = string(data)
+					}
 				}
 			}
 			enc := json.NewEncoder(cmd.OutOrStdout())
