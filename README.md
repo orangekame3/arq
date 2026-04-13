@@ -5,7 +5,7 @@
 > [!WARNING]
 > This project is experimental. Breaking changes may occur without notice.
 
-[ghq](https://github.com/x-motemen/ghq) for arXiv papers — manage local paper copies, summarize them with LLMs, and explore with fzf.
+Manage arXiv papers in your terminal — fetch, summarize with LLMs, and explore with fzf. Inspired by [ghq](https://github.com/x-motemen/ghq).
 
 ![demo](docs/demo.gif)
 

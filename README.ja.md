@@ -5,7 +5,7 @@
 > [!WARNING]
 > このプロジェクトは実験的です。予告なく破壊的変更が行われる可能性があります。
 
-arXiv 論文版の [ghq](https://github.com/x-motemen/ghq) — 論文をローカル管理し、LLM で要約を生成し、fzf で高速に探索する。
+ターミナルで arXiv 論文を管理 — 取得・LLM 要約・fzf 探索。[ghq](https://github.com/x-motemen/ghq) にインスパイアされたツール。
 
 ![demo](docs/demo.gif)
 
