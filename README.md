@@ -40,6 +40,7 @@ arq show <query> [--json|--summary]
 arq summarize <query> [--force]    # generate/regenerate summary (alias: sum)
 arq summarize --all [--force]      # summarize all papers at once
 arq search <keyword> [keyword...]  # search locally stored papers
+arq view <query> [-t group]        # open summary in mo (browser)
 arq path <query>
 arq open <query>
 arq has <id> [...]                 # check one or more IDs
@@ -164,6 +165,18 @@ prompt = """You are a quantum computing expert. Analyze the following paper in {
 ```
 
 The `{{lang}}` placeholder is replaced with the configured language at runtime.
+
+## Browser viewing with mo
+
+Open a paper's summary in [mo](https://github.com/k1LoW/mo) for browser-based Markdown viewing with KaTeX math rendering, syntax highlighting, and image display.
+
+```bash
+arq view 2303.12345                   # open summary in mo (default group: "arq")
+arq view 2303.12345 --target reads    # organize into a named group
+arq view "$(arq select)"             # fzf select → view
+```
+
+If a mo server is already running, the file is added to the existing session. Requires [mo](https://github.com/k1LoW/mo) (`brew install k1LoW/tap/mo`). For terminal viewing without mo, use `arq show --summary`.
 
 ## Search
 

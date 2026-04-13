@@ -40,6 +40,7 @@ arq show <query> [--json|--summary]
 arq summarize <query> [--force]    # 要約を生成/再生成 (alias: sum)
 arq summarize --all [--force]      # 全論文を一括要約
 arq search <keyword> [keyword...]  # ローカル論文を検索
+arq view <query> [-t group]        # サマリーを mo（ブラウザ）で開く
 arq path <query>
 arq open <query>
 arq has <id> [...]                 # 1つ以上のIDを存在チェック
@@ -164,6 +165,18 @@ prompt = """You are a quantum computing expert. Analyze the following paper in {
 ```
 
 `{{lang}}` プレースホルダは実行時に設定言語に置換される。
+
+## ブラウザ表示（mo 連携）
+
+論文のサマリーを [mo](https://github.com/k1LoW/mo) でブラウザ表示する。KaTeX 数式レンダリング、シンタックスハイライト、画像表示に対応。
+
+```bash
+arq view 2303.12345                   # サマリーを mo で開く（デフォルトグループ: "arq"）
+arq view 2303.12345 --target reads    # 名前付きグループに整理
+arq view "$(arq select)"             # fzf で選択 → 表示
+```
+
+mo サーバーが既に起動している場合、既存セッションにファイルが追加される。[mo](https://github.com/k1LoW/mo)（`brew install k1LoW/tap/mo`）が必要。mo なしでターミナル表示する場合は `arq show --summary` を使う。
 
 ## 検索
 
