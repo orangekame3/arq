@@ -8,7 +8,7 @@ import (
 
 // Version is the current version of arq.
 // tagpr will update this value automatically.
-var Version = "0.0.14"
+var Version = "0.0.15"
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
