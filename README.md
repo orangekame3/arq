@@ -42,7 +42,7 @@ arq summarize --all [--force]      # summarize all papers at once
 arq search <keyword> [keyword...]  # search locally stored papers
 arq view <query> [-t group]        # open summary in mo (browser)
 arq path <query>
-arq open <query>
+arq open <query>                 # open paper directory in file manager
 arq has <id> [...]                 # check one or more IDs
 arq has -                          # check IDs from stdin
 arq select

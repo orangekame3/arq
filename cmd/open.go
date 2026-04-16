@@ -12,14 +12,14 @@ import (
 
 var openCmd = &cobra.Command{
 	Use:   "open <query>",
-	Short: "Open a paper's PDF with the default viewer",
+	Short: "Open a paper's directory in the file manager",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		p, err := query.Resolve(args[0])
 		if err != nil {
 			return err
 		}
-		return openFile(paper.PDFPath(p))
+		return openFile(paper.Dir(p))
 	},
 }
 
