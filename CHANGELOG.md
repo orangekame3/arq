@@ -1,5 +1,7 @@
 # Changelog
 
+## [v0.0.15](https://github.com/orangekame3/arq/compare/v0.0.14...v0.0.15) - 2026-04-16
+
 ## [v0.0.14](https://github.com/orangekame3/arq/compare/v0.0.13...v0.0.14) - 2026-04-13
 - feat(cmd): add view command to open paper summaries in mo by @orangekame3 in https://github.com/orangekame3/arq/pull/41
 
