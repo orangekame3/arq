@@ -27,6 +27,7 @@ func init() {
 	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(thumbnailCmd)
 	rootCmd.AddCommand(summarizeCmd)
+	rootCmd.AddCommand(translateCmd)
 	rootCmd.AddCommand(searchCmd)
 	rootCmd.AddCommand(viewCmd)
 	rootCmd.AddCommand(versionCmd)
