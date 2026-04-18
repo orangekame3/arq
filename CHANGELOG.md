@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.16](https://github.com/orangekame3/arq/compare/v0.0.15...v0.0.16) - 2026-04-18
+- chore(cmd): add translate command for paper titles and abstracts by @orangekame3 in https://github.com/orangekame3/arq/pull/44
+
 ## [v0.0.15](https://github.com/orangekame3/arq/compare/v0.0.14...v0.0.15) - 2026-04-16
 
 ## [v0.0.14](https://github.com/orangekame3/arq/compare/v0.0.13...v0.0.14) - 2026-04-13
