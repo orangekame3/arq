@@ -106,6 +106,7 @@ type listEntry struct {
 	Authors    []string `json:"authors"`
 	Published  string   `json:"published"`
 	HasSummary bool     `json:"has_summary"`
+	HasNote    bool     `json:"has_note"`
 }
 
 func printJSON(cmd *cobra.Command, papers []*paper.Paper) error {
@@ -117,12 +118,19 @@ func printJSON(cmd *cobra.Command, papers []*paper.Paper) error {
 				hasSummary = true
 			}
 		}
+		hasNote := false
+		if np := paper.NotePath(p); np != "" {
+			if _, err := os.Stat(np); err == nil {
+				hasNote = true
+			}
+		}
 		entries[i] = listEntry{
 			ID:         p.ID,
 			Title:      p.Title,
 			Authors:    p.Authors,
 			Published:  p.Published,
 			HasSummary: hasSummary,
+			HasNote:    hasNote,
 		}
 	}
 	enc := json.NewEncoder(cmd.OutOrStdout())

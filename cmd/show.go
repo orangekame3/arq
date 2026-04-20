@@ -21,6 +21,7 @@ import (
 var (
 	showJSON    bool
 	showSummary bool
+	showNote    bool
 )
 
 var (
@@ -58,6 +59,9 @@ var showCmd = &cobra.Command{
 				HasSummary  bool     `json:"has_summary"`
 				SummaryPath string   `json:"summary_path,omitempty"`
 				Summary     string   `json:"summary,omitempty"`
+				HasNote     bool     `json:"has_note"`
+				NotePath    string   `json:"note_path,omitempty"`
+				Note        string   `json:"note,omitempty"`
 			}
 			entry := showEntry{
 				ID:         p.ID,
@@ -81,9 +85,32 @@ var showCmd = &cobra.Command{
 					}
 				}
 			}
+			if np := paper.NotePath(p); np != "" {
+				if _, err := os.Stat(np); err == nil {
+					entry.HasNote = true
+					entry.NotePath = np
+					if data, err := os.ReadFile(np); err == nil {
+						entry.Note = string(data)
+					}
+				}
+			}
 			enc := json.NewEncoder(cmd.OutOrStdout())
 			enc.SetIndent("", "  ")
 			return enc.Encode(entry)
+		}
+
+		// Note-only mode: render markdown with pager
+		if showNote {
+			notePath := paper.NotePath(p)
+			data, err := os.ReadFile(notePath)
+			if err != nil {
+				return fmt.Errorf("note not found for %s", p.ID)
+			}
+			if isatty.IsTerminal(os.Stdout.Fd()) {
+				return pager.RunMarkdown(string(data))
+			}
+			_, writeErr := cmd.OutOrStdout().Write(data)
+			return writeErr
 		}
 
 		// Summary-only mode: render markdown with pager
@@ -136,6 +163,9 @@ var showCmd = &cobra.Command{
 		}
 		if _, err := os.Stat(paper.SummaryPath(p)); err == nil {
 			_, _ = fmt.Fprintf(w, "%s  %s\n", labelStyle.Render("Summary  "), paper.SummaryPath(p))
+		}
+		if _, err := os.Stat(paper.NotePath(p)); err == nil {
+			_, _ = fmt.Fprintf(w, "%s  %s\n", labelStyle.Render("Note     "), paper.NotePath(p))
 		}
 
 		_, _ = fmt.Fprintln(w)
@@ -208,4 +238,5 @@ func renderSummary(p *paper.Paper, w io.Writer) error {
 func init() {
 	showCmd.Flags().BoolVar(&showJSON, "json", false, "Output in JSON format")
 	showCmd.Flags().BoolVar(&showSummary, "summary", false, "Show only the rendered summary")
+	showCmd.Flags().BoolVar(&showNote, "note", false, "Show only the reading note")
 }

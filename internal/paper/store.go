@@ -51,6 +51,11 @@ func SummaryPath(p *Paper) string {
 	return filepath.Join(Dir(p), "summary.md")
 }
 
+// NotePath returns the note.md path for a given paper.
+func NotePath(p *Paper) string {
+	return filepath.Join(Dir(p), "note.md")
+}
+
 // AssetsDir returns the assets directory for a given paper.
 func AssetsDir(p *Paper) string {
 	return filepath.Join(Dir(p), "assets")
