@@ -31,4 +31,5 @@ func init() {
 	rootCmd.AddCommand(searchCmd)
 	rootCmd.AddCommand(viewCmd)
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(upgradeCmd)
 }

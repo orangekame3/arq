@@ -15,10 +15,33 @@ Manage arXiv papers in your terminal — fetch, summarize with LLMs, and explore
 
 ## Install
 
+```bash
+curl -fsSL https://raw.githubusercontent.com/orangekame3/arq/main/scripts/install.sh | sh
+```
+
 ### Homebrew
 
 ```bash
 brew install orangekame3/tap/arq
+```
+
+### Shell installer
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/orangekame3/arq/main/scripts/install.sh | sh
+```
+
+By default, the binary is installed to `~/.local/bin`. Override with `ARQ_INSTALL_DIR`:
+
+```bash
+ARQ_INSTALL_DIR=/usr/local/bin curl -fsSL https://raw.githubusercontent.com/orangekame3/arq/main/scripts/install.sh | sh
+```
+
+If you prefer to inspect the script before running:
+
+```bash
+curl -fsSL -o install-arq.sh https://raw.githubusercontent.com/orangekame3/arq/main/scripts/install.sh
+sh install-arq.sh
 ```
 
 ### Go
