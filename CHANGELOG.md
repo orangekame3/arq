@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.17](https://github.com/orangekame3/arq/compare/v0.0.16...v0.0.17) - 2026-04-20
+- feat(cmd): add upgrade command and installation script by @orangekame3 in https://github.com/orangekame3/arq/pull/51
+
 ## [v0.0.16](https://github.com/orangekame3/arq/compare/v0.0.15...v0.0.16) - 2026-04-20
 - chore(cmd): add translate command for paper titles and abstracts by @orangekame3 in https://github.com/orangekame3/arq/pull/44
 - feat(cmd): add note handling to list and show commands by @orangekame3 in https://github.com/orangekame3/arq/pull/50
