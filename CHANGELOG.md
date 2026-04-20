@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.0.18](https://github.com/orangekame3/arq/compare/v0.0.17...v0.0.18) - 2026-04-20
+- chore(deps): bump github.com/charmbracelet/bubbletea from 1.3.6 to 1.3.10 by @dependabot[bot] in https://github.com/orangekame3/arq/pull/47
+- chore(deps): bump charm.land/fantasy from 0.17.1 to 0.19.0 by @dependabot[bot] in https://github.com/orangekame3/arq/pull/48
+- chore(deps): bump github.com/charmbracelet/bubbles from 0.21.1-0.20250623103423-23b8fd6302d7 to 1.0.0 by @dependabot[bot] in https://github.com/orangekame3/arq/pull/49
+
 ## [v0.0.17](https://github.com/orangekame3/arq/compare/v0.0.16...v0.0.17) - 2026-04-20
 - feat(cmd): add upgrade command and installation script by @orangekame3 in https://github.com/orangekame3/arq/pull/51
 
