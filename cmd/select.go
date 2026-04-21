@@ -11,6 +11,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func keywordsField(p *paper.Paper) string {
+	return strings.Join(p.Keywords, " ") + " " + strings.Join(p.KeywordsJA, " ")
+}
+
 var selectCmd = &cobra.Command{
 	Use:   "select",
 	Short: "Interactively select a paper with fzf",
@@ -23,15 +27,15 @@ var selectCmd = &cobra.Command{
 			return fmt.Errorf("no papers found")
 		}
 
-		// Build TSV input for fzf
+		// Build TSV input for fzf (5th field: keywords for fuzzy matching, hidden from display)
 		var input strings.Builder
 		for _, p := range papers {
-			_, _ = fmt.Fprintf(&input, "%s\t%s\t%s\t%s\n",
-				p.ID, p.Title, p.AuthorShort(), p.PublishedShort())
+			_, _ = fmt.Fprintf(&input, "%s\t%s\t%s\t%s\t%s\n",
+				p.ID, p.Title, p.AuthorShort(), p.PublishedShort(), keywordsField(p))
 		}
 
-		// Run fzf
-		fzf := exec.Command("fzf", "--with-nth=2..")
+		// Run fzf (show fields 2..4, but search across all fields including keywords)
+		fzf := exec.Command("fzf", "--with-nth=2..4")
 		fzf.Stdin = strings.NewReader(input.String())
 		fzf.Stderr = os.Stderr
 

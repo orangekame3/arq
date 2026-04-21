@@ -10,6 +10,7 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/orangekame3/arq/internal/ar5iv"
+	"github.com/orangekame3/arq/internal/keyword"
 	"github.com/orangekame3/arq/internal/paper"
 	"github.com/orangekame3/arq/internal/query"
 	"github.com/orangekame3/arq/internal/summarize"
@@ -114,6 +115,23 @@ func summarizePaper(logger *log.Logger, p *paper.Paper) error {
 		downloaded := downloadFigures(logger, p, figures)
 		if downloaded > 0 {
 			logger.Info("downloaded figures", "count", downloaded)
+		}
+	}
+
+	// Extract keywords
+	if len(p.Keywords) == 0 || summarizeForce {
+		logger.Info("extracting keywords", "id", p.ID)
+		en, ja, err := keyword.Extract(p.Title, p.Abstract)
+		if err != nil {
+			logger.Warn("keyword extraction failed", "error", err)
+		} else {
+			p.Keywords = en
+			p.KeywordsJA = ja
+			if err := paper.Save(p); err != nil {
+				logger.Warn("failed to save keywords", "error", err)
+			} else {
+				logger.Info("saved keywords", "en", en, "ja", ja)
+			}
 		}
 	}
 
