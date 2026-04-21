@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.19](https://github.com/orangekame3/arq/compare/v0.0.18...v0.0.19) - 2026-04-21
+- feat(cmd): add keyword extraction and display in paper commands by @orangekame3 in https://github.com/orangekame3/arq/pull/54
+
 ## [v0.0.18](https://github.com/orangekame3/arq/compare/v0.0.17...v0.0.18) - 2026-04-20
 - chore(deps): bump github.com/charmbracelet/bubbletea from 1.3.6 to 1.3.10 by @dependabot[bot] in https://github.com/orangekame3/arq/pull/47
 - chore(deps): bump charm.land/fantasy from 0.17.1 to 0.19.0 by @dependabot[bot] in https://github.com/orangekame3/arq/pull/48
