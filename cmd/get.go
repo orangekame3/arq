@@ -14,6 +14,7 @@ import (
 	"github.com/orangekame3/arq/internal/ar5iv"
 	"github.com/orangekame3/arq/internal/arxiv"
 	"github.com/orangekame3/arq/internal/config"
+	"github.com/orangekame3/arq/internal/keyword"
 	"github.com/orangekame3/arq/internal/paper"
 	"github.com/orangekame3/arq/internal/summarize"
 	"github.com/orangekame3/arq/internal/translate"
@@ -190,6 +191,19 @@ func summarizeOne(logger *log.Logger, p *paper.Paper) error {
 			_ = f.Close()
 		}
 	}
+
+	// Extract keywords
+	if len(p.Keywords) == 0 {
+		en, ja, err := keyword.Extract(p.Title, p.Abstract)
+		if err != nil {
+			logger.Warn("keyword extraction failed", "error", err)
+		} else {
+			p.Keywords = en
+			p.KeywordsJA = ja
+			_ = paper.Save(p)
+		}
+	}
+
 	return nil
 }
 

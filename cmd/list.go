@@ -45,6 +45,7 @@ var listCmd = &cobra.Command{
 					p.Title,
 					p.AuthorShort(),
 					p.PublishedShort(),
+					strings.Join(p.Keywords, " ") + " " + strings.Join(p.KeywordsJA, " "),
 				}
 				_, _ = fmt.Fprintln(cmd.OutOrStdout(), strings.Join(fields, "\t"))
 			}

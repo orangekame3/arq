@@ -85,6 +85,7 @@ func matchPaper(p *paper.Paper, keywords []string) (bool, []string) {
 	fieldTexts := map[string]string{
 		"title":    strings.ToLower(p.Title + " " + p.TitleJA),
 		"abstract": strings.ToLower(p.Abstract + " " + p.AbstractJA),
+		"keywords": strings.ToLower(strings.Join(p.Keywords, " ") + " " + strings.Join(p.KeywordsJA, " ")),
 	}
 
 	if searchField == "all" || searchField == "summary" {
@@ -167,7 +168,7 @@ func printSearchTable(cmd *cobra.Command, results []searchResult) error {
 }
 
 func init() {
-	searchCmd.Flags().StringVar(&searchField, "field", "all", "Search field: title, abstract, summary, all")
+	searchCmd.Flags().StringVar(&searchField, "field", "all", "Search field: title, abstract, keywords, summary, all")
 	searchCmd.Flags().BoolVar(&searchJSON, "json", false, "Output in JSON format")
 	searchCmd.Flags().BoolVar(&searchID, "id", false, "Output IDs only")
 }

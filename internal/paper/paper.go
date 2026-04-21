@@ -16,6 +16,8 @@ type Paper struct {
 	Category   string   `json:"category"`
 	PDFURL     string   `json:"pdf_url"`
 	Thumbnail  string   `json:"thumbnail,omitempty"`
+	Keywords   []string `json:"keywords,omitempty"`
+	KeywordsJA []string `json:"keywords_ja,omitempty"`
 	AddedAt    string   `json:"added_at"`
 }
 
