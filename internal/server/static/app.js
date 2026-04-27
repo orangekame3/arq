@@ -292,9 +292,53 @@ $btnToggleTheme.onclick = () => {
 const savedTheme = localStorage.getItem("arq-theme");
 if (savedTheme) applyTheme(savedTheme);
 
+// Events: meta panel tabs
+const $btnToggleNote = document.getElementById("btn-toggle-note");
+const $metaTabInfo = document.getElementById("meta-tab-info");
+const $metaTabNote = document.getElementById("meta-tab-note");
+const $metaInfoContent = document.getElementById("meta-info-content");
+const $metaNoteContent = document.getElementById("meta-note-content");
+
+function switchMetaTab(tab) {
+  if (tab === "info") {
+    $metaTabInfo.classList.add("active");
+    $metaTabNote.classList.remove("active");
+    $metaInfoContent.classList.remove("hidden");
+    $metaNoteContent.classList.add("hidden");
+  } else {
+    $metaTabNote.classList.add("active");
+    $metaTabInfo.classList.remove("active");
+    $metaNoteContent.classList.remove("hidden");
+    $metaInfoContent.classList.add("hidden");
+  }
+}
+
+$metaTabInfo.onclick = () => switchMetaTab("info");
+$metaTabNote.onclick = () => switchMetaTab("note");
+
 // Events: panel toggles
 $btnToggleMeta.onclick = () => {
-  $metadataPanel.classList.toggle("collapsed");
+  if (!$metadataPanel.classList.contains("collapsed")) {
+    // If note tab is active, just collapse
+    $metadataPanel.classList.add("collapsed");
+  } else {
+    $metadataPanel.classList.remove("collapsed");
+    switchMetaTab("info");
+  }
+};
+
+$btnToggleNote.onclick = () => {
+  if (!$metadataPanel.classList.contains("collapsed")) {
+    const noteActive = $metaTabNote.classList.contains("active");
+    if (noteActive) {
+      $metadataPanel.classList.add("collapsed");
+    } else {
+      switchMetaTab("note");
+    }
+  } else {
+    $metadataPanel.classList.remove("collapsed");
+    switchMetaTab("note");
+  }
 };
 
 $btnToggleSidebar.onclick = () => {
@@ -346,6 +390,9 @@ document.addEventListener("keydown", (e) => {
   }
   if (e.key === "i" && !e.metaKey) {
     $btnToggleMeta.click();
+  }
+  if (e.key === "n" && !e.metaKey) {
+    $btnToggleNote.click();
   }
   if (e.key === "b" && !e.metaKey) {
     $btnToggleSidebar.click();
