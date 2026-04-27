@@ -109,7 +109,7 @@ func Start(ctx context.Context, initialPaperID string, opts Options) error {
 
 	addr := ln.Addr().(*net.TCPAddr)
 	host := addr.IP.String()
-	if host == "0.0.0.0" {
+	if host == "0.0.0.0" || host == "::" {
 		host = "127.0.0.1"
 	}
 	url := fmt.Sprintf("http://%s:%d", host, addr.Port)
