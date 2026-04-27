@@ -393,14 +393,54 @@ mark {
   min-width: 0;
   border-left: 1px solid var(--border);
   background: var(--bg-panel);
-  overflow-y: auto;
+  overflow: hidden;
   transition: width var(--transition);
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 #metadata-panel.collapsed {
   width: 0;
   border-left: none;
+}
+
+#meta-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.meta-tab {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.meta-tab:hover {
+  color: var(--text-secondary);
+}
+
+.meta-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+#meta-info-content,
+#meta-note-content {
+  overflow-y: auto;
+  flex: 1;
+}
+
+#meta-note-content .meta-section-body {
+  white-space: pre-wrap;
 }
 
 #meta-header {

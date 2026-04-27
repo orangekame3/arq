@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>arq</title>
+  <link rel="icon" type="image/png" href="/static/logo.png">
   <link rel="stylesheet" href="/static/app.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
@@ -44,6 +45,7 @@
           <div id="toolbar-actions">
             <button id="btn-arxiv" title="Open on arxiv.org">arxiv</button>
             <button id="btn-toggle-meta" title="Toggle metadata panel (i)">info</button>
+            <button id="btn-toggle-note" title="Toggle note panel (n)">note</button>
             <button id="btn-toggle-theme" title="Toggle dark/light mode (t)">theme</button>
           </div>
         </div>
@@ -51,10 +53,18 @@
           <div id="pdf-loading">Loading PDF…</div>
           <iframe id="pdf-frame"></iframe>
           <aside id="metadata-panel" class="collapsed">
-            <div id="meta-header"></div>
-            <div id="meta-abstract"></div>
-            <div id="meta-summary"></div>
-            <div id="meta-notes"></div>
+            <div id="meta-tabs">
+              <button id="meta-tab-info" class="meta-tab active">Info</button>
+              <button id="meta-tab-note" class="meta-tab">Note</button>
+            </div>
+            <div id="meta-info-content">
+              <div id="meta-header"></div>
+              <div id="meta-abstract"></div>
+              <div id="meta-summary"></div>
+            </div>
+            <div id="meta-note-content" class="hidden">
+              <div id="meta-notes"></div>
+            </div>
           </aside>
         </div>
       </div>
