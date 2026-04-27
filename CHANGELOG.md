@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.23](https://github.com/orangekame3/arq/compare/v0.0.22...v0.0.23) - 2026-04-27
+- feat(mobile): implement mobile layout and functionality enhancements by @orangekame3 in https://github.com/orangekame3/arq/pull/67
+
 ## [v0.0.22](https://github.com/orangekame3/arq/compare/v0.0.21...v0.0.22) - 2026-04-27
 - feat(cmd): add --listen and --no-open flags to view command by @orangekame3 in https://github.com/orangekame3/arq/pull/64
 - fix(server): handle IPv6 address in listener binding by @orangekame3 in https://github.com/orangekame3/arq/pull/65
