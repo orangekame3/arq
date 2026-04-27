@@ -64,8 +64,17 @@ type listResponse struct {
 	Categories []categoryEntry `json:"categories"`
 }
 
+// Options configures the paper viewer server.
+type Options struct {
+	ListenAddr string // address to bind (default "127.0.0.1:0")
+	NoOpen     bool   // suppress browser auto-open
+}
+
 // Start launches the browser-based paper viewer.
-func Start(ctx context.Context, initialPaperID string) error {
+func Start(ctx context.Context, initialPaperID string, opts Options) error {
+	if opts.ListenAddr == "" {
+		opts.ListenAddr = "127.0.0.1:0"
+	}
 	mux := http.NewServeMux()
 
 	// API routes
@@ -93,13 +102,17 @@ func Start(ctx context.Context, initialPaperID string) error {
 		_, _ = w.Write(data)
 	})
 
-	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	ln, err := net.Listen("tcp", opts.ListenAddr)
 	if err != nil {
 		return fmt.Errorf("listen: %w", err)
 	}
 
-	port := ln.Addr().(*net.TCPAddr).Port
-	url := fmt.Sprintf("http://127.0.0.1:%d", port)
+	addr := ln.Addr().(*net.TCPAddr)
+	host := addr.IP.String()
+	if host == "0.0.0.0" {
+		host = "127.0.0.1"
+	}
+	url := fmt.Sprintf("http://%s:%d", host, addr.Port)
 	if initialPaperID != "" {
 		url += "#paper=" + initialPaperID
 	}
@@ -111,8 +124,10 @@ func Start(ctx context.Context, initialPaperID string) error {
 		_ = srv.Shutdown(context.Background())
 	}()
 
-	fmt.Fprintf(os.Stderr, "arq view: %s\n", url)
-	openBrowser(url)
+	fmt.Fprintf(os.Stderr, "arq view: %s (listening on %s)\n", url, ln.Addr())
+	if !opts.NoOpen {
+		openBrowser(url)
+	}
 
 	if err := srv.Serve(ln); err != http.ErrServerClosed {
 		return err
