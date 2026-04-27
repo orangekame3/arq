@@ -29,6 +29,11 @@ let selectedPaperID = null;
 let showJapanese = false;
 let sortOrder = "date-desc";
 
+// Mobile helpers
+function isMobile() {
+  return window.matchMedia("(max-width: 640px)").matches;
+}
+
 // DOM
 const $app = document.getElementById("app");
 const $sidebar = document.getElementById("sidebar");
@@ -54,6 +59,9 @@ const $metaHeader = document.getElementById("meta-header");
 const $metaAbstract = document.getElementById("meta-abstract");
 const $metaSummary = document.getElementById("meta-summary");
 const $metaNotes = document.getElementById("meta-notes");
+const $btnBack = document.getElementById("btn-back");
+const $sidebarOverlay = document.getElementById("sidebar-overlay");
+const $detail = document.getElementById("detail");
 
 // Fetch
 async function fetchPapers() {
@@ -88,6 +96,7 @@ function renderSidebar() {
       selectedCategory = li.dataset.cat || null;
       fetchPapers();
       writeURLState();
+      closeMobileSidebar();
     };
   });
 }
@@ -157,6 +166,11 @@ async function selectPaper(id) {
 
   $detailEmpty.classList.add("hidden");
   $detailContent.classList.remove("hidden");
+
+  // Mobile: slide in detail view
+  if (isMobile()) {
+    $detail.classList.add("mobile-show");
+  }
 
   $toolbarId.textContent = detail.id;
   $btnArxiv.onclick = () =>
@@ -241,14 +255,25 @@ function renderMetadata(detail) {
   }
 }
 
-// PDF — use browser's native PDF viewer via iframe
+// PDF — use browser's native PDF viewer via iframe (or direct link on mobile)
 const $pdfLoading = document.getElementById("pdf-loading");
+const $pdfMobilePrompt = document.getElementById("pdf-mobile-prompt");
+const $pdfOpenLink = document.getElementById("pdf-open-link");
 
 function loadPDF(id, japanese) {
   const url = japanese ? `/api/papers/${id}/pdf/ja` : `/api/papers/${id}/pdf`;
-  $pdfLoading.classList.remove("hidden");
-  $pdfFrame.onload = () => $pdfLoading.classList.add("hidden");
-  $pdfFrame.src = url + "#view=FitH";
+  if (isMobile()) {
+    // Mobile: show a button to open PDF in a new tab (iframe PDF is unreliable on mobile)
+    $pdfLoading.classList.add("hidden");
+    $pdfMobilePrompt.classList.remove("hidden");
+    $pdfOpenLink.href = url;
+    $pdfFrame.src = "";
+  } else {
+    $pdfMobilePrompt.classList.add("hidden");
+    $pdfLoading.classList.remove("hidden");
+    $pdfFrame.onload = () => $pdfLoading.classList.add("hidden");
+    $pdfFrame.src = url + "#view=FitH";
+  }
 }
 
 // Events: language toggle
@@ -341,10 +366,6 @@ $btnToggleNote.onclick = () => {
   }
 };
 
-$btnToggleSidebar.onclick = () => {
-  $sidebar.classList.toggle("collapsed");
-};
-
 $btnToggleList.onclick = () => {
   $paperList.classList.toggle("collapsed");
 };
@@ -428,6 +449,77 @@ function highlight(text, query) {
   const qEsc = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return escaped.replace(new RegExp(`(${qEsc})`, "gi"), `<mark>$1</mark>`);
 }
+
+// Mobile: FAB menu toggle
+const $fabTrigger = document.getElementById("fab-trigger");
+const $fabOverlay = document.getElementById("fab-overlay");
+const $toolbarActions = document.getElementById("toolbar-actions");
+
+function closeFab() {
+  $toolbarActions.classList.remove("fab-open");
+  $fabTrigger.classList.remove("fab-open");
+  $fabOverlay.classList.remove("visible");
+}
+
+$fabTrigger.onclick = () => {
+  const isOpen = $toolbarActions.classList.contains("fab-open");
+  if (isOpen) {
+    closeFab();
+  } else {
+    $toolbarActions.classList.add("fab-open");
+    $fabTrigger.classList.add("fab-open");
+    $fabOverlay.classList.add("visible");
+  }
+};
+
+$fabOverlay.onclick = () => closeFab();
+
+// Close FAB after any action button is tapped
+$toolbarActions.addEventListener("click", (e) => {
+  if (e.target.tagName === "BUTTON" && isMobile()) {
+    closeFab();
+  }
+});
+
+// Mobile: menu button in paper list header
+const $btnMobileMenu = document.getElementById("btn-mobile-menu");
+$btnMobileMenu.onclick = () => {
+  $sidebar.classList.add("mobile-open");
+  $sidebar.classList.remove("collapsed");
+  $sidebarOverlay.classList.add("visible");
+};
+
+// Mobile: close sidebar when category is selected
+function closeMobileSidebar() {
+  if (isMobile()) {
+    $sidebar.classList.remove("mobile-open");
+    $sidebarOverlay.classList.remove("visible");
+  }
+}
+
+// Mobile: back button returns to paper list
+$btnBack.onclick = () => {
+  $detail.classList.remove("mobile-show");
+  // Collapse metadata panel if open
+  $metadataPanel.classList.add("collapsed");
+};
+
+// Mobile: sidebar toggle (reuse hamburger button on list view)
+$btnToggleSidebar.onclick = () => {
+  if (isMobile()) {
+    $sidebar.classList.toggle("mobile-open");
+    $sidebar.classList.remove("collapsed");
+    $sidebarOverlay.classList.toggle("visible");
+  } else {
+    $sidebar.classList.toggle("collapsed");
+  }
+};
+
+// Mobile: close sidebar on overlay tap
+$sidebarOverlay.onclick = () => {
+  $sidebar.classList.remove("mobile-open");
+  $sidebarOverlay.classList.remove("visible");
+};
 
 // Init
 async function init() {
