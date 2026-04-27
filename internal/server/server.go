@@ -90,7 +90,7 @@ func Start(ctx context.Context, initialPaperID string) error {
 		}
 		data, _ := staticFS.ReadFile("static/index.html")
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Write(data)
+		_, _ = w.Write(data)
 	})
 
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
@@ -108,7 +108,7 @@ func Start(ctx context.Context, initialPaperID string) error {
 
 	go func() {
 		<-ctx.Done()
-		srv.Shutdown(context.Background())
+		_ = srv.Shutdown(context.Background())
 	}()
 
 	fmt.Fprintf(os.Stderr, "arq view: %s\n", url)
@@ -272,12 +272,12 @@ func serveTextFile(w http.ResponseWriter, path string) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/markdown; charset=utf-8")
-	w.Write(data)
+	_, _ = w.Write(data)
 }
 
 func writeJSON(w http.ResponseWriter, v any) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(v)
+	_ = json.NewEncoder(w).Encode(v)
 }
 
 func fileExists(path string) bool {
@@ -297,5 +297,5 @@ func openBrowser(url string) {
 	default:
 		return
 	}
-	exec.Command(cmd, url).Start()
+	_ = exec.Command(cmd, url).Start()
 }
