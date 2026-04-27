@@ -143,6 +143,24 @@ html, body {
   white-space: nowrap;
 }
 
+#list-title-row {
+  display: none;
+}
+
+#btn-mobile-menu {
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+#btn-mobile-menu:hover {
+  background: var(--hover);
+}
+
 #search {
   width: 100%;
   padding: 6px 10px;
@@ -380,6 +398,17 @@ mark {
   pointer-events: none;
 }
 
+/* FAB trigger & overlay — hidden on desktop */
+#fab-trigger,
+#fab-overlay {
+  display: none;
+}
+
+/* PDF mobile prompt — shown instead of iframe on touch devices */
+#pdf-mobile-prompt {
+  display: none;
+}
+
 /* PDF via iframe — native browser viewer */
 #pdf-frame {
   flex: 1;
@@ -569,9 +598,281 @@ mark {
   }
 }
 
+/* Mobile layout: view-stack pattern */
 @media (max-width: 640px) {
+  #app {
+    position: relative;
+  }
+
+  #sidebar {
+    position: fixed;
+    inset: 0;
+    width: 100% !important;
+    z-index: 100;
+    border-right: none !important;
+    transform: translateX(-100%);
+    transition: transform var(--transition);
+  }
+
+  #sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Keep sidebar hidden when collapsed class is present (desktop toggle) */
+  #sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+
   #paper-list {
-    width: 0;
+    width: 100% !important;
     border-right: none;
+    transition: none;
+  }
+
+  #paper-list.collapsed {
+    width: 100% !important;
+  }
+
+  /* Mobile: detail hidden by default, shown when paper selected */
+  #detail {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+
+  #detail.mobile-show {
+    transform: translateX(0);
+  }
+
+  /* Back button visible on mobile */
+  #btn-back {
+    display: inline-block !important;
+    font-size: 18px;
+    padding: 3px 8px;
+  }
+
+  /* Hide desktop panel toggles on mobile */
+  #btn-toggle-sidebar,
+  #btn-toggle-list {
+    display: none;
+  }
+
+  /* Metadata panel as overlay */
+  #metadata-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100% !important;
+    z-index: 110;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    border-left: none;
+  }
+
+  #metadata-panel:not(.collapsed) {
+    transform: translateX(0);
+  }
+
+  /* Touch-friendly toolbar */
+  #detail-toolbar {
+    padding: 8px 12px;
+    min-height: 44px;
+    gap: 6px;
+  }
+
+  #toolbar-panels button {
+    min-width: 36px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #lang-toggle {
+    border-radius: 8px;
+  }
+
+  #lang-toggle button {
+    padding: 10px 16px;
+    font-size: 14px;
+    min-height: 40px;
+  }
+
+  #toolbar-id {
+    font-size: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* FAB menu */
+  #toolbar-actions {
+    position: fixed;
+    bottom: 24px;
+    right: 16px;
+    z-index: 200;
+    flex-direction: column-reverse;
+    gap: 0;
+    background: var(--bg-panel);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    padding: 0;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-height 0.25s ease, opacity 0.2s ease;
+  }
+
+  #toolbar-actions.fab-open {
+    max-height: 240px;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 4px 0;
+  }
+
+  #toolbar-actions button {
+    padding: 12px 20px;
+    font-size: 14px;
+    min-height: 44px;
+    width: 100%;
+    text-align: left;
+    justify-content: flex-start;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  #toolbar-actions button:active {
+    background: var(--hover);
+  }
+
+  /* FAB trigger button */
+  #fab-trigger {
+    display: flex !important;
+    position: fixed;
+    bottom: 24px;
+    right: 16px;
+    z-index: 201;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: 22px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  #fab-trigger.fab-open {
+    transform: rotate(45deg);
+    bottom: calc(24px + 4px);
+  }
+
+  /* Shift FAB menu up above trigger */
+  #toolbar-actions.fab-open {
+    bottom: calc(24px + 56px);
+  }
+
+  /* FAB overlay to close menu */
+  #fab-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 199;
+  }
+
+  #fab-overlay.visible {
+    display: block;
+  }
+
+  #list-header {
+    padding: 12px;
+  }
+
+  #list-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  #list-title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  #search {
+    padding: 10px 12px;
+    font-size: 16px; /* prevent iOS zoom on focus */
+    border-radius: 8px;
+  }
+
+  #papers li {
+    padding: 12px;
+  }
+
+  .paper-title {
+    font-size: 14px;
+  }
+
+  #meta-header {
+    padding: 16px;
+  }
+
+  .meta-section {
+    padding: 14px 16px;
+  }
+
+  /* Mobile: show PDF open button instead of iframe */
+  #pdf-mobile-prompt {
+    display: flex !important;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+  }
+
+  #pdf-mobile-prompt:not(.hidden) ~ #pdf-frame {
+    display: none;
+  }
+
+  #pdf-open-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  #pdf-open-link:active {
+    opacity: 0.8;
+  }
+
+  /* Sidebar overlay close area */
+  #sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 99;
+  }
+
+  #sidebar-overlay.visible {
+    display: block;
   }
 }

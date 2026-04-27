@@ -10,12 +10,17 @@
 </head>
 <body>
   <div id="app">
+    <div id="sidebar-overlay"></div>
     <aside id="sidebar">
       <div class="sidebar-header">arq</div>
       <ul id="categories"></ul>
     </aside>
     <section id="paper-list">
       <header id="list-header">
+        <div id="list-title-row">
+          <button id="btn-mobile-menu" title="Categories">&#9776;</button>
+          <span id="list-title">arq</span>
+        </div>
         <input id="search" type="text" placeholder="Search" autocomplete="off">
         <div id="list-meta">
           <span id="paper-count"></span>
@@ -34,6 +39,7 @@
       <div id="detail-content" class="hidden">
         <div id="detail-toolbar">
           <div id="toolbar-panels">
+            <button id="btn-back" title="Back to list" class="hidden">&#8592;</button>
             <button id="btn-toggle-sidebar" title="Toggle sidebar">&#9776;</button>
             <button id="btn-toggle-list" title="Toggle paper list">&#9881;</button>
           </div>
@@ -48,9 +54,14 @@
             <button id="btn-toggle-note" title="Toggle note panel (n)">note</button>
             <button id="btn-toggle-theme" title="Toggle dark/light mode (t)">theme</button>
           </div>
+          <div id="fab-overlay"></div>
+          <button id="fab-trigger">+</button>
         </div>
         <div id="detail-body">
           <div id="pdf-loading">Loading PDF…</div>
+          <div id="pdf-mobile-prompt" class="hidden">
+            <a id="pdf-open-link" href="#" target="_blank">Open PDF</a>
+          </div>
           <iframe id="pdf-frame"></iframe>
           <aside id="metadata-panel" class="collapsed">
             <div id="meta-tabs">
