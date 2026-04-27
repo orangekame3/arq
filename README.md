@@ -66,10 +66,14 @@ arq list [--tsv|--json|--id]
 arq show <query> [--json|--summary]
 arq summarize <query> [--force]    # generate/regenerate summary (alias: sum)
 arq summarize --all [--force]      # summarize all papers at once
+arq translate <query> [--force]    # translate title and abstract
+arq translate --all [--force]      # translate all papers at once
 arq search <keyword> [keyword...]  # search locally stored papers
-arq view <query> [-t group]        # open summary in mo (browser)
+arq keywords <query>               # extract search keywords with LLM
+arq keywords --all                 # extract keywords for all papers
+arq view [query]                   # open paper library in browser
 arq path <query>
-arq open <query>                 # open paper directory in file manager
+arq open <query>                   # open paper directory in file manager
 arq has <id> [...]                 # check one or more IDs
 arq has -                          # check IDs from stdin
 arq select
@@ -77,6 +81,7 @@ arq remove <query>                 # remove a paper (alias: rm)
 arq thumbnail set <query> <image>  # set thumbnail
 arq thumbnail path <query>         # get thumbnail path
 arq config
+arq upgrade                        # upgrade arq to the latest version
 arq version
 ```
 
@@ -193,17 +198,37 @@ prompt = """You are a quantum computing expert. Analyze the following paper in {
 
 The `{{lang}}` placeholder is replaced with the configured language at runtime.
 
-## Browser viewing with mo
+## Browser viewer
 
-Open a paper's summary in [mo](https://github.com/k1LoW/mo) for browser-based Markdown viewing with KaTeX math rendering, syntax highlighting, and image display.
+Launch a built-in browser-based paper library with PDF viewer, metadata panel, and note support.
 
 ```bash
-arq view 2303.12345                   # open summary in mo (default group: "arq")
-arq view 2303.12345 --target reads    # organize into a named group
+arq view                              # open the full library
+arq view 2303.12345                   # open and navigate to a specific paper
 arq view "$(arq select)"             # fzf select → view
 ```
 
-If a mo server is already running, the file is added to the existing session. Requires [mo](https://github.com/k1LoW/mo) (`brew install k1LoW/tap/mo`). For terminal viewing without mo, use `arq show --summary`.
+Keyboard shortcuts:
+
+| Key | Action |
+|-----|--------|
+| `j` / `k` | Navigate paper list |
+| `f` | Toggle fullscreen (hide all panels) |
+| `i` | Toggle info panel |
+| `n` | Toggle note panel |
+| `l` | Toggle Original / Japanese PDF |
+| `b` | Toggle sidebar |
+| `t` | Toggle dark / light mode |
+
+## Keywords
+
+Extract bilingual search keywords from a paper's title and abstract using an LLM. Keywords are saved to `meta.json` and used for fuzzy matching in `arq select`.
+
+```bash
+arq keywords 2303.12345               # extract keywords for a paper
+arq keywords --all                    # extract for all papers without keywords
+arq keywords --force 2303.12345       # re-extract
+```
 
 ## Search
 
@@ -239,13 +264,15 @@ Exit code is 0 if all IDs are found, 1 if any are missing.
 
 ## Translation
 
-Translate title and abstract using an LLM on `arq get`. Supports OpenAI, Anthropic, and OpenRouter.
+Translate title and abstract using an LLM. Supports OpenAI, Anthropic, and OpenRouter.
 
 ```bash
-arq config set translate.enabled true
-arq config set translate.api_key sk-xxx
-arq get 2303.12345                      # auto-translates
-arq get --no-translate 2303.12345       # skip for this one
+arq translate 2303.12345               # translate a paper
+arq translate --all                    # translate all untranslated papers
+arq translate --force 2303.12345       # re-translate
+arq get --translate 2303.12345         # translate on fetch
+arq config set translate.enabled true  # always auto-translate on get
+arq get --no-translate 2303.12345      # skip for this one
 arq show 2303.12345                    # shows both en and ja
 ```
 
@@ -309,6 +336,11 @@ enabled = true
 | OpenRouter | `OPENROUTER_API_KEY` | All of the above + Gemini, Llama, ... |
 
 LLM integration is powered by [fantasy](https://github.com/charmbracelet/fantasy).
+
+## Blog posts
+
+- [arq: Managing arXiv Papers in the Terminal with ghq Philosophy](https://zenn.dev/qsrh/articles/arq-20260416) — Introduction to arq's design and features
+- [Managing Paper Retrieval, Translation, and Reading via Terminal](https://zenn.dev/qsrh/articles/arq-pdf-translate-20260414) — End-to-end workflow with arq, PDFMathTranslate, and Syncthing
 
 ## Acknowledgements
 

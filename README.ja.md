@@ -66,10 +66,14 @@ arq list [--tsv|--json|--id]
 arq show <query> [--json|--summary]
 arq summarize <query> [--force]    # 要約を生成/再生成 (alias: sum)
 arq summarize --all [--force]      # 全論文を一括要約
+arq translate <query> [--force]    # タイトルとアブストラクトを翻訳
+arq translate --all [--force]      # 全論文を一括翻訳
 arq search <keyword> [keyword...]  # ローカル論文を検索
-arq view <query> [-t group]        # サマリーを mo（ブラウザ）で開く
+arq keywords <query>               # LLM で検索キーワードを抽出
+arq keywords --all                 # 全論文のキーワードを抽出
+arq view [query]                   # 論文ライブラリをブラウザで開く
 arq path <query>
-arq open <query>
+arq open <query>                   # 論文ディレクトリをファイルマネージャで開く
 arq has <id> [...]                 # 1つ以上のIDを存在チェック
 arq has -                          # stdin からIDを読み込んでチェック
 arq select
@@ -77,6 +81,7 @@ arq remove <query>                 # 論文を削除 (alias: rm)
 arq thumbnail set <query> <image>  # サムネイル設定
 arq thumbnail path <query>         # サムネイルパス取得
 arq config
+arq upgrade                        # arq を最新版にアップグレード
 arq version
 ```
 
@@ -193,17 +198,37 @@ prompt = """You are a quantum computing expert. Analyze the following paper in {
 
 `{{lang}}` プレースホルダは実行時に設定言語に置換される。
 
-## ブラウザ表示（mo 連携）
+## ブラウザビューア
 
-論文のサマリーを [mo](https://github.com/k1LoW/mo) でブラウザ表示する。KaTeX 数式レンダリング、シンタックスハイライト、画像表示に対応。
+内蔵のブラウザベース論文ライブラリを起動する。PDF ビューア、メタデータパネル、ノート表示に対応。
 
 ```bash
-arq view 2303.12345                   # サマリーを mo で開く（デフォルトグループ: "arq"）
-arq view 2303.12345 --target reads    # 名前付きグループに整理
+arq view                              # ライブラリ全体を開く
+arq view 2303.12345                   # 特定の論文に移動して開く
 arq view "$(arq select)"             # fzf で選択 → 表示
 ```
 
-mo サーバーが既に起動している場合、既存セッションにファイルが追加される。[mo](https://github.com/k1LoW/mo)（`brew install k1LoW/tap/mo`）が必要。mo なしでターミナル表示する場合は `arq show --summary` を使う。
+キーボードショートカット:
+
+| キー | 操作 |
+|------|------|
+| `j` / `k` | 論文リストを移動 |
+| `f` | 全画面表示（全パネルを非表示） |
+| `i` | 情報パネルの切替 |
+| `n` | ノートパネルの切替 |
+| `l` | Original / Japanese PDF の切替 |
+| `b` | サイドバーの切替 |
+| `t` | ダーク / ライトモードの切替 |
+
+## キーワード抽出
+
+LLM を使って論文のタイトルとアブストラクトから二言語（英語/日本語）の検索キーワードを抽出する。キーワードは `meta.json` に保存され、`arq select` でのファジーマッチングに使用される。
+
+```bash
+arq keywords 2303.12345               # キーワードを抽出
+arq keywords --all                    # キーワードがない全論文を一括処理
+arq keywords --force 2303.12345       # 再抽出
+```
 
 ## 検索
 
@@ -239,13 +264,15 @@ arq has 2303.12345                     # 単一ID: exit 0/1、出力なし
 
 ## 翻訳
 
-`arq get` 時に LLM でタイトルとアブストラクトを翻訳する。OpenAI、Anthropic、OpenRouter に対応。
+LLM でタイトルとアブストラクトを翻訳する。OpenAI、Anthropic、OpenRouter に対応。
 
 ```bash
-arq config set translate.enabled true
-arq config set translate.api_key sk-xxx
-arq get 2303.12345                      # 自動翻訳
-arq get --no-translate 2303.12345       # 今回だけスキップ
+arq translate 2303.12345               # 論文を翻訳
+arq translate --all                    # 未翻訳の全論文を一括翻訳
+arq translate --force 2303.12345       # 再翻訳
+arq get --translate 2303.12345         # 取得時に翻訳
+arq config set translate.enabled true  # get 時に常に自動翻訳
+arq get --no-translate 2303.12345      # 今回だけスキップ
 arq show 2303.12345                    # 英語・日本語の両方を表示
 ```
 
@@ -309,6 +336,11 @@ enabled = true
 | OpenRouter | `OPENROUTER_API_KEY` | 上記すべて + Gemini, Llama, ... |
 
 LLM 連携には [fantasy](https://github.com/charmbracelet/fantasy) を使用。
+
+## ブログ記事
+
+- [arq: ターミナルで arXiv 論文を ghq ライクに管理する](https://zenn.dev/qsrh/articles/arq-20260416) — arq の設計思想と機能紹介
+- [論文の取得・翻訳・閲覧をターミナル中心で回す](https://zenn.dev/qsrh/articles/arq-pdf-translate-20260414) — arq + PDFMathTranslate + Syncthing を使ったエンドツーエンドのワークフロー
 
 ## Acknowledgements
 
