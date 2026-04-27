@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/arq_logo.png" alt="arq logo" width="200">
+  <img src="docs/arq_logo.png" alt="arq logo" width="400">
 </p>
 
 # arq
