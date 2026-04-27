@@ -44,11 +44,13 @@
           <div id="toolbar-actions">
             <button id="btn-arxiv" title="Open on arxiv.org">arxiv</button>
             <button id="btn-toggle-meta" title="Toggle metadata panel (i)">info</button>
+            <button id="btn-toggle-theme" title="Toggle dark/light mode (t)">theme</button>
           </div>
         </div>
         <div id="detail-body">
+          <div id="pdf-loading">Loading PDF…</div>
           <iframe id="pdf-frame"></iframe>
-          <aside id="metadata-panel">
+          <aside id="metadata-panel" class="collapsed">
             <div id="meta-header"></div>
             <div id="meta-abstract"></div>
             <div id="meta-summary"></div>

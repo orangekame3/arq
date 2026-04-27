@@ -1,3 +1,26 @@
+// URL state helpers
+function readURLState() {
+  const params = new URLSearchParams(window.location.search);
+  const hash = window.location.hash;
+  return {
+    paper: hash.startsWith("#paper=") ? hash.slice(7) : null,
+    category: params.get("cat") || null,
+    sort: params.get("sort") || "date-desc",
+    q: params.get("q") || "",
+  };
+}
+
+function writeURLState() {
+  const params = new URLSearchParams();
+  if (selectedCategory) params.set("cat", selectedCategory);
+  if (sortOrder !== "date-desc") params.set("sort", sortOrder);
+  if ($search.value) params.set("q", $search.value);
+  const qs = params.toString();
+  const hash = selectedPaperID ? `#paper=${selectedPaperID}` : "";
+  const url = qs ? `?${qs}${hash}` : `${window.location.pathname}${hash}`;
+  history.replaceState(null, "", url);
+}
+
 // State
 let papers = [];
 let categories = [];
@@ -64,6 +87,7 @@ function renderSidebar() {
     li.onclick = () => {
       selectedCategory = li.dataset.cat || null;
       fetchPapers();
+      writeURLState();
     };
   });
 }
@@ -108,9 +132,10 @@ function renderPaperList() {
       .filter(Boolean)
       .join("  ");
 
+    const q = $search.value;
     html += `<li class="${selectedPaperID === p.id ? "active" : ""}" data-id="${p.id}">
-      <div class="paper-title">${esc(title)}</div>
-      <div class="paper-authors">${esc(formatAuthors(p.authors))}</div>
+      <div class="paper-title">${highlight(title, q)}</div>
+      <div class="paper-authors">${highlight(formatAuthors(p.authors), q)}</div>
       <div class="paper-meta">
         ${p.published}${indicators ? `<span class="paper-indicators">${indicators}</span>` : ""}
       </div>
@@ -125,7 +150,7 @@ function renderPaperList() {
 // Select paper
 async function selectPaper(id) {
   selectedPaperID = id;
-  window.location.hash = `paper=${id}`;
+  writeURLState();
   renderPaperList();
 
   const detail = await fetchDetail(id);
@@ -217,9 +242,13 @@ function renderMetadata(detail) {
 }
 
 // PDF — use browser's native PDF viewer via iframe
+const $pdfLoading = document.getElementById("pdf-loading");
+
 function loadPDF(id, japanese) {
   const url = japanese ? `/api/papers/${id}/pdf/ja` : `/api/papers/${id}/pdf`;
-  $pdfFrame.src = url;
+  $pdfLoading.classList.remove("hidden");
+  $pdfFrame.onload = () => $pdfLoading.classList.add("hidden");
+  $pdfFrame.src = url + "#view=FitH";
 }
 
 // Events: language toggle
@@ -239,6 +268,30 @@ $btnJa.onclick = () => {
   if (selectedPaperID) loadPDF(selectedPaperID, true);
 };
 
+// Events: theme toggle
+const $btnToggleTheme = document.getElementById("btn-toggle-theme");
+
+function applyTheme(theme) {
+  if (theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+  }
+}
+
+$btnToggleTheme.onclick = () => {
+  const current = document.documentElement.getAttribute("data-theme");
+  const isDark = current === "dark" ||
+    (!current && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const next = isDark ? "light" : "dark";
+  applyTheme(next);
+  localStorage.setItem("arq-theme", next);
+};
+
+// Restore saved theme
+const savedTheme = localStorage.getItem("arq-theme");
+if (savedTheme) applyTheme(savedTheme);
+
 // Events: panel toggles
 $btnToggleMeta.onclick = () => {
   $metadataPanel.classList.toggle("collapsed");
@@ -256,18 +309,37 @@ $btnToggleList.onclick = () => {
 let searchTimer;
 $search.oninput = () => {
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(fetchPapers, 200);
+  searchTimer = setTimeout(() => {
+    fetchPapers();
+    writeURLState();
+  }, 200);
 };
 
 // Events: sort
 $sortSelect.onchange = () => {
   sortOrder = $sortSelect.value;
   renderPaperList();
+  writeURLState();
 };
 
 // Events: keyboard
 document.addEventListener("keydown", (e) => {
   if (e.target === $search) return;
+  if ((e.key === "j" || e.key === "k") && !e.metaKey) {
+    const sorted = sortPapers(papers);
+    if (sorted.length === 0) return;
+    const curIdx = sorted.findIndex((p) => p.id === selectedPaperID);
+    let nextIdx;
+    if (e.key === "j") {
+      nextIdx = curIdx < 0 ? 0 : Math.min(curIdx + 1, sorted.length - 1);
+    } else {
+      nextIdx = curIdx < 0 ? 0 : Math.max(curIdx - 1, 0);
+    }
+    selectPaper(sorted[nextIdx].id);
+    // Scroll the active item into view
+    const activeLi = $papers.querySelector("li.active");
+    if (activeLi) activeLi.scrollIntoView({ block: "nearest" });
+  }
   if (e.key === "l" && !e.metaKey) {
     if ($langToggle.classList.contains("hidden")) return;
     showJapanese ? $btnEn.click() : $btnJa.click();
@@ -278,6 +350,23 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "b" && !e.metaKey) {
     $btnToggleSidebar.click();
   }
+  if (e.key === "t" && !e.metaKey) {
+    $btnToggleTheme.click();
+  }
+  if (e.key === "f" && !e.metaKey) {
+    const isFullscreen = $sidebar.classList.contains("collapsed") &&
+      $paperList.classList.contains("collapsed") &&
+      $metadataPanel.classList.contains("collapsed");
+    if (isFullscreen) {
+      $sidebar.classList.remove("collapsed");
+      $paperList.classList.remove("collapsed");
+      $metadataPanel.classList.remove("collapsed");
+    } else {
+      $sidebar.classList.add("collapsed");
+      $paperList.classList.add("collapsed");
+      $metadataPanel.classList.add("collapsed");
+    }
+  }
 });
 
 function esc(s) {
@@ -286,12 +375,25 @@ function esc(s) {
   return d.innerHTML;
 }
 
+function highlight(text, query) {
+  if (!query) return esc(text);
+  const escaped = esc(text);
+  const qEsc = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return escaped.replace(new RegExp(`(${qEsc})`, "gi"), `<mark>$1</mark>`);
+}
+
 // Init
 async function init() {
+  const state = readURLState();
+  selectedCategory = state.category;
+  sortOrder = state.sort;
+  $sortSelect.value = sortOrder;
+  $search.value = state.q;
+
   await fetchPapers();
-  const hash = window.location.hash;
-  if (hash.startsWith("#paper=")) {
-    selectPaper(hash.slice(7));
+
+  if (state.paper) {
+    selectPaper(state.paper);
   }
 }
 
