@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.0.21](https://github.com/orangekame3/arq/compare/v0.0.20...v0.0.21) - 2026-04-27
+- feat(cmd): implement keyword extraction command and improve error handling by @orangekame3 in https://github.com/orangekame3/arq/pull/58
+- feat(theme): add theme toggle and enhance URL state management by @orangekame3 in https://github.com/orangekame3/arq/pull/60
+- chore: remove redundant code and update logo reference by @orangekame3 in https://github.com/orangekame3/arq/pull/61
+- style(readme): increase logo size in Japanese and English README by @orangekame3 in https://github.com/orangekame3/arq/pull/62
+- feat(docs): add translation and keyword extraction commands to README by @orangekame3 in https://github.com/orangekame3/arq/pull/63
+
 ## [v0.0.20](https://github.com/orangekame3/arq/compare/v0.0.19...v0.0.20) - 2026-04-27
 - chore(deps): bump charm.land/fantasy from 0.19.0 to 0.21.0 by @dependabot[bot] in https://github.com/orangekame3/arq/pull/56
 
