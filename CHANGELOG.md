@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.0.22](https://github.com/orangekame3/arq/compare/v0.0.21...v0.0.22) - 2026-04-27
+- feat(cmd): add --listen and --no-open flags to view command by @orangekame3 in https://github.com/orangekame3/arq/pull/64
+- fix(server): handle IPv6 address in listener binding by @orangekame3 in https://github.com/orangekame3/arq/pull/65
+
 ## [v0.0.21](https://github.com/orangekame3/arq/compare/v0.0.20...v0.0.21) - 2026-04-27
 - feat(cmd): implement keyword extraction command and improve error handling by @orangekame3 in https://github.com/orangekame3/arq/pull/58
 - feat(theme): add theme toggle and enhance URL state management by @orangekame3 in https://github.com/orangekame3/arq/pull/60
