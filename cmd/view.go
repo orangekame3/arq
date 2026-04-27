@@ -10,13 +10,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	viewListen string
+	viewNoOpen bool
+)
+
 var viewCmd = &cobra.Command{
 	Use:   "view [query]",
 	Short: "Open paper library in browser",
 	Long: `Launch a browser-based paper viewer.
 
 Without arguments, opens the full library.
-With a query, navigates to the matching paper.`,
+With a query, navigates to the matching paper.
+
+Use --listen to bind to a specific address (e.g. 0.0.0.0:8080) for remote access.
+Use --no-open to suppress automatic browser opening (useful for headless servers).`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var initialPaperID string
@@ -31,6 +39,14 @@ With a query, navigates to the matching paper.`,
 		ctx, cancel := signal.NotifyContext(cmd.Context(), os.Interrupt, syscall.SIGTERM)
 		defer cancel()
 
-		return server.Start(ctx, initialPaperID)
+		return server.Start(ctx, initialPaperID, server.Options{
+			ListenAddr: viewListen,
+			NoOpen:     viewNoOpen,
+		})
 	},
+}
+
+func init() {
+	viewCmd.Flags().StringVar(&viewListen, "listen", "", "address to listen on (default \"127.0.0.1:0\")")
+	viewCmd.Flags().BoolVar(&viewNoOpen, "no-open", false, "do not open browser automatically")
 }
