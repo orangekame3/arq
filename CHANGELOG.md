@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.20](https://github.com/orangekame3/arq/compare/v0.0.19...v0.0.20) - 2026-04-27
+- chore(deps): bump charm.land/fantasy from 0.19.0 to 0.21.0 by @dependabot[bot] in https://github.com/orangekame3/arq/pull/56
+
 ## [v0.0.19](https://github.com/orangekame3/arq/compare/v0.0.18...v0.0.19) - 2026-04-21
 - feat(cmd): add keyword extraction and display in paper commands by @orangekame3 in https://github.com/orangekame3/arq/pull/54
 
