@@ -56,6 +56,11 @@ func NotePath(p *Paper) string {
 	return filepath.Join(Dir(p), "note.md")
 }
 
+// PDFJaPath returns the Japanese-translated PDF path for a given paper.
+func PDFJaPath(p *Paper) string {
+	return filepath.Join(Dir(p), "paper_ja.pdf")
+}
+
 // AssetsDir returns the assets directory for a given paper.
 func AssetsDir(p *Paper) string {
 	return filepath.Join(Dir(p), "assets")
