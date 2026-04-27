@@ -3,12 +3,12 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
 	"github.com/orangekame3/arq/internal/paper"
+	"github.com/orangekame3/arq/internal/search"
 	"github.com/spf13/cobra"
 )
 
@@ -47,7 +47,7 @@ Use --field to limit search to a specific field.`,
 
 		var results []searchResult
 		for _, p := range papers {
-			matched, fields := matchPaper(p, keywords)
+			matched, fields := search.Match(p, keywords, searchField)
 			if matched {
 				results = append(results, searchResult{
 					ID:        p.ID,
@@ -79,54 +79,6 @@ Use --field to limit search to a specific field.`,
 
 		return printSearchTable(cmd, results)
 	},
-}
-
-func matchPaper(p *paper.Paper, keywords []string) (bool, []string) {
-	fieldTexts := map[string]string{
-		"title":    strings.ToLower(p.Title + " " + p.TitleJA),
-		"abstract": strings.ToLower(p.Abstract + " " + p.AbstractJA),
-		"keywords": strings.ToLower(strings.Join(p.Keywords, " ") + " " + strings.Join(p.KeywordsJA, " ")),
-	}
-
-	if searchField == "all" || searchField == "summary" {
-		if summaryPath := paper.SummaryPath(p); summaryPath != "" {
-			if data, err := os.ReadFile(summaryPath); err == nil {
-				fieldTexts["summary"] = strings.ToLower(string(data))
-			}
-		}
-	}
-
-	var matchedFields []string
-	for _, kw := range keywords {
-		found := false
-		for field, text := range fieldTexts {
-			if searchField != "all" && searchField != field {
-				continue
-			}
-			if strings.Contains(text, kw) {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return false, nil
-		}
-	}
-
-	// Collect which fields matched (for display)
-	for field, text := range fieldTexts {
-		if searchField != "all" && searchField != field {
-			continue
-		}
-		for _, kw := range keywords {
-			if strings.Contains(text, kw) {
-				matchedFields = append(matchedFields, field)
-				break
-			}
-		}
-	}
-
-	return true, matchedFields
 }
 
 func printSearchTable(cmd *cobra.Command, results []searchResult) error {

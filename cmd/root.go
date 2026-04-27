@@ -32,4 +32,5 @@ func init() {
 	rootCmd.AddCommand(viewCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(upgradeCmd)
+	rootCmd.AddCommand(keywordsCmd)
 }

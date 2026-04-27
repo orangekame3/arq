@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>arq</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <div class="sidebar-header">arq</div>
+      <ul id="categories"></ul>
+    </aside>
+    <section id="paper-list">
+      <header id="list-header">
+        <input id="search" type="text" placeholder="Search" autocomplete="off">
+        <div id="list-meta">
+          <span id="paper-count"></span>
+          <select id="sort-select">
+            <option value="date-desc">Newest</option>
+            <option value="date-asc">Oldest</option>
+            <option value="title">Title</option>
+            <option value="added">Recently Added</option>
+          </select>
+        </div>
+      </header>
+      <ul id="papers"></ul>
+    </section>
+    <main id="detail">
+      <div id="detail-empty">Select a paper to read</div>
+      <div id="detail-content" class="hidden">
+        <div id="detail-toolbar">
+          <div id="toolbar-panels">
+            <button id="btn-toggle-sidebar" title="Toggle sidebar">&#9776;</button>
+            <button id="btn-toggle-list" title="Toggle paper list">&#9881;</button>
+          </div>
+          <div id="lang-toggle" class="hidden">
+            <button id="btn-en" class="active">Original</button>
+            <button id="btn-ja">Japanese</button>
+          </div>
+          <span id="toolbar-id"></span>
+          <div id="toolbar-actions">
+            <button id="btn-arxiv" title="Open on arxiv.org">arxiv</button>
+            <button id="btn-toggle-meta" title="Toggle metadata panel (i)">info</button>
+          </div>
+        </div>
+        <div id="detail-body">
+          <iframe id="pdf-frame"></iframe>
+          <aside id="metadata-panel">
+            <div id="meta-header"></div>
+            <div id="meta-abstract"></div>
+            <div id="meta-summary"></div>
+            <div id="meta-notes"></div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/static/app.js" type="module"></script>
+</body>
+</html>

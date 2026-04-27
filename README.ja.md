@@ -92,7 +92,7 @@ arq show "$(arq select)"
 `arq list --tsv` をパイプして自由にカスタマイズもできる:
 
 ```bash
-arq list --tsv | fzf --with-nth=2.. | cut -f1
+arq list --tsv | fzf --with-nth=2..4 | cut -f1
 ```
 
 #### シェル関数
@@ -103,21 +103,21 @@ arq list --tsv | fzf --with-nth=2.. | cut -f1
 # fzf プレビュー付きで論文を開く
 arqo() {
   local id
-  id=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}' | cut -f1)
+  id=$(arq list --tsv | fzf --with-nth=2..4 --preview 'arq show {1}' | cut -f1)
   [ -n "$id" ] && arq open "$id"
 }
 
 # 論文ディレクトリに cd
 arqd() {
   local path
-  path=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}' | cut -f1)
+  path=$(arq list --tsv | fzf --with-nth=2..4 --preview 'arq show {1}' | cut -f1)
   [ -n "$path" ] && cd "$(dirname "$(arq path "$path")")"
 }
 
 # fzf プレビューで要約を表示
 arqs() {
   local id
-  id=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show --summary {1}' | cut -f1)
+  id=$(arq list --tsv | fzf --with-nth=2..4 --preview 'arq show --summary {1}' | cut -f1)
   [ -n "$id" ] && arq show --summary "$id"
 }
 ```

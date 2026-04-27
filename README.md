@@ -92,7 +92,7 @@ arq show "$(arq select)"
 For custom fzf usage, pipe `arq list --tsv`:
 
 ```bash
-arq list --tsv | fzf --with-nth=2.. | cut -f1
+arq list --tsv | fzf --with-nth=2..4 | cut -f1
 ```
 
 #### Shell functions
@@ -103,21 +103,21 @@ Add to `.zshrc` / `.bashrc`:
 # Open a paper with fzf preview
 arqo() {
   local id
-  id=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}' | cut -f1)
+  id=$(arq list --tsv | fzf --with-nth=2..4 --preview 'arq show {1}' | cut -f1)
   [ -n "$id" ] && arq open "$id"
 }
 
 # cd to a paper directory
 arqd() {
   local path
-  path=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show {1}' | cut -f1)
+  path=$(arq list --tsv | fzf --with-nth=2..4 --preview 'arq show {1}' | cut -f1)
   [ -n "$path" ] && cd "$(dirname "$(arq path "$path")")"
 }
 
 # Show summary with fzf preview
 arqs() {
   local id
-  id=$(arq list --tsv | fzf --with-nth=2.. --preview 'arq show --summary {1}' | cut -f1)
+  id=$(arq list --tsv | fzf --with-nth=2..4 --preview 'arq show --summary {1}' | cut -f1)
   [ -n "$id" ] && arq show --summary "$id"
 }
 ```
