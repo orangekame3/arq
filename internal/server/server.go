@@ -378,7 +378,17 @@ func handleRestart(srv *http.Server, listenAddr string, restarting *bool) http.H
 		go func() {
 			time.Sleep(100 * time.Millisecond)
 			_ = srv.Shutdown(context.Background())
-			_ = syscall.Exec(exe, args, os.Environ())
+
+			// Start the new process as a detached child, then exit
+			cmd := exec.Command(exe, args[1:]...)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
+			if err := cmd.Start(); err != nil {
+				fmt.Fprintf(os.Stderr, "restart failed: %v\n", err)
+				os.Exit(1)
+			}
+			os.Exit(0)
 		}()
 	}
 }
