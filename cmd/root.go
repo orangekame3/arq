@@ -30,6 +30,7 @@ func init() {
 	rootCmd.AddCommand(translateCmd)
 	rootCmd.AddCommand(searchCmd)
 	rootCmd.AddCommand(viewCmd)
+	rootCmd.AddCommand(restartCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(upgradeCmd)
 	rootCmd.AddCommand(keywordsCmd)

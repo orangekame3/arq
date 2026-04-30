@@ -130,6 +130,11 @@ func Start(ctx context.Context, initialPaperID string, opts Options) error {
 		_ = srv.Shutdown(context.Background())
 	}()
 
+	// Write server address file for CLI discovery
+	serverFile := ServerFilePath()
+	_ = os.WriteFile(serverFile, []byte(ln.Addr().String()), 0o644)
+	defer func() { _ = os.Remove(serverFile) }()
+
 	fmt.Fprintf(os.Stderr, "arq view: %s (listening on %s)\n", url, ln.Addr())
 	if !opts.NoOpen {
 		openBrowser(url)
@@ -139,6 +144,11 @@ func Start(ctx context.Context, initialPaperID string, opts Options) error {
 		return err
 	}
 	return nil
+}
+
+// ServerFilePath returns the path to the server address file.
+func ServerFilePath() string {
+	return filepath.Join(paper.Root(), ".server")
 }
 
 func handleListPapers(w http.ResponseWriter, r *http.Request) {
