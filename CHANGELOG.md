@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.32](https://github.com/orangekame3/arq/compare/v0.0.31...v0.0.32) - 2026-04-30
+- fix(server): implement detachProcess for cross-platform restart handling by @orangekame3 in https://github.com/orangekame3/arq/pull/85
+
 ## [v0.0.31](https://github.com/orangekame3/arq/compare/v0.0.30...v0.0.31) - 2026-04-30
 - fix(server): improve restart logic to use detached child process by @orangekame3 in https://github.com/orangekame3/arq/pull/83
 
