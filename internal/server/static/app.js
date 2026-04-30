@@ -285,13 +285,7 @@ function downloadPDF() {
   const base = showJapanese
     ? `/api/papers/${selectedPaperID}/pdf/ja`
     : `/api/papers/${selectedPaperID}/pdf`;
-  const suffix = showJapanese ? "_ja" : "";
-  const a = document.createElement("a");
-  a.href = base + "?download=1";
-  a.download = `${selectedPaperID}${suffix}.pdf`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  window.open(base + "?download=1", "_blank");
 }
 
 // Events: language toggle
