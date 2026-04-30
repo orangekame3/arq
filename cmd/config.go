@@ -21,6 +21,7 @@ Without subcommands, prints the current configuration.
 
 Available keys for 'config set':
   root                  Paper storage root directory
+  view.listen           Default listen address for arq view (e.g. "0.0.0.0:8080")
   translate.enabled     Auto-translate on get ("true" or "false")
   translate.provider    LLM provider ("anthropic" or "openai")
   translate.model       Model name (e.g. "gpt-4o-mini", "claude-haiku-4-5-20251001")
@@ -36,6 +37,7 @@ Available keys for 'config set':
 		w := cmd.OutOrStdout()
 		_, _ = fmt.Fprintf(w, "Config file: %s\n\n", config.Path())
 		_, _ = fmt.Fprintf(w, "root                 = %q\n", c.Root)
+		_, _ = fmt.Fprintf(w, "view.listen          = %q\n", c.View.Listen)
 		_, _ = fmt.Fprintf(w, "translate.enabled    = %v\n", c.Translate.Enabled)
 		_, _ = fmt.Fprintf(w, "translate.provider   = %q\n", c.Translate.Provider)
 		_, _ = fmt.Fprintf(w, "translate.model      = %q\n", c.Translate.Model)
@@ -80,6 +82,8 @@ var configSetCmd = &cobra.Command{
 		switch key {
 		case "root":
 			c.Root = value
+		case "view.listen":
+			c.View.Listen = value
 		case "translate.enabled":
 			if value != "true" && value != "false" {
 				return fmt.Errorf("translate.enabled must be \"true\" or \"false\"")
@@ -138,6 +142,8 @@ var configGetCmd = &cobra.Command{
 		switch key {
 		case "root":
 			value = c.Root
+		case "view.listen":
+			value = c.View.Listen
 		case "translate.enabled":
 			value = fmt.Sprintf("%v", c.Translate.Enabled)
 		case "translate.provider":

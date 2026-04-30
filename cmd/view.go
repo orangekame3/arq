@@ -5,6 +5,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/orangekame3/arq/internal/config"
 	"github.com/orangekame3/arq/internal/query"
 	"github.com/orangekame3/arq/internal/server"
 	"github.com/spf13/cobra"
@@ -34,6 +35,13 @@ Use --no-open to suppress automatic browser opening (useful for headless servers
 				return err
 			}
 			initialPaperID = p.ID
+		}
+
+		// Use config listen address if --listen flag was not explicitly set
+		if !cmd.Flags().Changed("listen") {
+			if c := config.Load(); c.View.Listen != "" {
+				viewListen = c.View.Listen
+			}
 		}
 
 		ctx, cancel := signal.NotifyContext(cmd.Context(), os.Interrupt, syscall.SIGTERM)

@@ -11,8 +11,14 @@ import (
 // Config holds arq configuration.
 type Config struct {
 	Root      string          `toml:"root"`
+	View      ViewConfig      `toml:"view"`
 	Translate TranslateConfig `toml:"translate"`
 	Summarize SummarizeConfig `toml:"summarize"`
+}
+
+// ViewConfig holds settings for the arq view server.
+type ViewConfig struct {
+	Listen string `toml:"listen"` // address to listen on (e.g. "0.0.0.0:8080")
 }
 
 // TranslateConfig holds LLM translation settings.
