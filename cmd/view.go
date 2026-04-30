@@ -42,6 +42,7 @@ Use --no-open to suppress automatic browser opening (useful for headless servers
 		return server.Start(ctx, initialPaperID, server.Options{
 			ListenAddr: viewListen,
 			NoOpen:     viewNoOpen,
+			Version:    Version,
 		})
 	},
 }

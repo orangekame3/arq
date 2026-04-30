@@ -14,6 +14,8 @@ import (
 	"runtime"
 	"sort"
 	"strings"
+	"syscall"
+	"time"
 
 	"github.com/orangekame3/arq/internal/paper"
 	"github.com/orangekame3/arq/internal/search"
@@ -68,6 +70,7 @@ type listResponse struct {
 type Options struct {
 	ListenAddr string // address to bind (default "127.0.0.1:0")
 	NoOpen     bool   // suppress browser auto-open
+	Version    string // current arq version for update checks
 }
 
 // Start launches the browser-based paper viewer.
@@ -85,6 +88,7 @@ func Start(ctx context.Context, initialPaperID string, opts Options) error {
 	mux.HandleFunc("GET /api/papers/{id}/summary", handleSummary)
 	mux.HandleFunc("GET /api/papers/{id}/note", handleNote)
 	mux.HandleFunc("GET /api/papers/{id}/assets/", handleAssets)
+	mux.HandleFunc("GET /api/version", handleVersion(opts.Version))
 
 	// Static files
 	staticSub, _ := fs.Sub(staticFS, "static")
@@ -119,10 +123,17 @@ func Start(ctx context.Context, initialPaperID string, opts Options) error {
 
 	srv := &http.Server{Handler: mux}
 
+	mux.HandleFunc("POST /api/restart", handleRestart(srv, ln.Addr().String()))
+
 	go func() {
 		<-ctx.Done()
 		_ = srv.Shutdown(context.Background())
 	}()
+
+	// Write server address file for CLI discovery
+	serverFile := ServerFilePath()
+	_ = os.WriteFile(serverFile, []byte(ln.Addr().String()), 0o644)
+	defer func() { _ = os.Remove(serverFile) }()
 
 	fmt.Fprintf(os.Stderr, "arq view: %s (listening on %s)\n", url, ln.Addr())
 	if !opts.NoOpen {
@@ -133,6 +144,11 @@ func Start(ctx context.Context, initialPaperID string, opts Options) error {
 		return err
 	}
 	return nil
+}
+
+// ServerFilePath returns the path to the server address file.
+func ServerFilePath() string {
+	return filepath.Join(paper.Root(), ".server")
 }
 
 func handleListPapers(w http.ResponseWriter, r *http.Request) {
@@ -304,6 +320,90 @@ func writeJSON(w http.ResponseWriter, v any) {
 func fileExists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
+}
+
+type versionResponse struct {
+	Current string `json:"current"`
+	Latest  string `json:"latest,omitempty"`
+	Update  bool   `json:"update_available"`
+}
+
+func handleVersion(currentVersion string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		resp := versionResponse{Current: currentVersion}
+
+		client := &http.Client{Timeout: 5 * time.Second}
+		ghReq, err := http.NewRequestWithContext(r.Context(), "GET",
+			"https://api.github.com/repos/orangekame3/arq/releases/latest", nil)
+		if err == nil {
+			ghReq.Header.Set("Accept", "application/vnd.github.v3+json")
+			ghResp, err := client.Do(ghReq)
+			if err == nil {
+				defer func() { _ = ghResp.Body.Close() }()
+				if ghResp.StatusCode == http.StatusOK {
+					var release struct {
+						TagName string `json:"tag_name"`
+					}
+					if json.NewDecoder(ghResp.Body).Decode(&release) == nil {
+						latest := strings.TrimPrefix(release.TagName, "v")
+						resp.Latest = latest
+						resp.Update = latest != currentVersion
+					}
+				}
+			}
+		}
+
+		writeJSON(w, resp)
+	}
+}
+
+func handleRestart(srv *http.Server, listenAddr string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		exe, err := os.Executable()
+		if err != nil {
+			http.Error(w, "failed to find executable: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		writeJSON(w, map[string]string{"status": "restarting"})
+
+		args := rebuildArgs(os.Args, listenAddr)
+
+		go func() {
+			time.Sleep(100 * time.Millisecond)
+			_ = srv.Shutdown(context.Background())
+			_ = syscall.Exec(exe, args, os.Environ())
+		}()
+	}
+}
+
+// rebuildArgs ensures --listen is set to the actual bound address so restarts keep the same port.
+func rebuildArgs(original []string, addr string) []string {
+	args := make([]string, 0, len(original)+2)
+	skip := false
+	found := false
+	for i, a := range original {
+		if skip {
+			skip = false
+			continue
+		}
+		if a == "--listen" && i+1 < len(original) {
+			args = append(args, "--listen", addr)
+			skip = true
+			found = true
+			continue
+		}
+		if strings.HasPrefix(a, "--listen=") {
+			args = append(args, "--listen="+addr)
+			found = true
+			continue
+		}
+		args = append(args, a)
+	}
+	if !found {
+		args = append(args, "--listen", addr, "--no-open")
+	}
+	return args
 }
 
 func openBrowser(url string) {
