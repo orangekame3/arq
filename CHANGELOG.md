@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.25](https://github.com/orangekame3/arq/compare/v0.0.24...v0.0.25) - 2026-04-30
+- feat(server): add version check and restart functionality by @orangekame3 in https://github.com/orangekame3/arq/pull/71
+
 ## [v0.0.24](https://github.com/orangekame3/arq/compare/v0.0.23...v0.0.24) - 2026-04-30
 - feat(download): add PDF download functionality and button by @orangekame3 in https://github.com/orangekame3/arq/pull/69
 
