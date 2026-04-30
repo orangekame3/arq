@@ -353,6 +353,21 @@ mark {
   color: var(--text);
 }
 
+#update-badge {
+  font-size: 10px;
+  color: #fff;
+  background: #e06c00;
+  padding: 2px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#update-badge:hover {
+  background: #c05800;
+}
+
 #toolbar-actions {
   display: flex;
   gap: 4px;

@@ -538,6 +538,32 @@ $sidebarOverlay.onclick = () => {
   $sidebarOverlay.classList.remove("visible");
 };
 
+// Update check
+const $updateBadge = document.getElementById("update-badge");
+
+async function checkForUpdate() {
+  try {
+    const res = await fetch("/api/version");
+    const data = await res.json();
+    if (data.update_available && data.latest) {
+      $updateBadge.textContent = `v${data.latest} available`;
+      $updateBadge.classList.remove("hidden");
+      $updateBadge.onclick = async () => {
+        if (!confirm(`Current: v${data.current}\nLatest: v${data.latest}\n\nRun "brew upgrade arq" first, then click OK to restart the server.`)) return;
+        $updateBadge.textContent = "restarting…";
+        try {
+          await fetch("/api/restart", { method: "POST" });
+        } catch (_) {
+          // Connection will drop as server restarts
+        }
+        setTimeout(() => location.reload(), 2000);
+      };
+    }
+  } catch (_) {
+    // Ignore errors (offline, etc.)
+  }
+}
+
 // Init
 async function init() {
   const state = readURLState();
@@ -551,6 +577,8 @@ async function init() {
   if (state.paper) {
     selectPaper(state.paper);
   }
+
+  checkForUpdate();
 }
 
 init();
