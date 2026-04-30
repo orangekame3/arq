@@ -123,7 +123,8 @@ func Start(ctx context.Context, initialPaperID string, opts Options) error {
 
 	srv := &http.Server{Handler: mux}
 
-	mux.HandleFunc("POST /api/restart", handleRestart(srv, ln.Addr().String()))
+	restarting := false
+	mux.HandleFunc("POST /api/restart", handleRestart(srv, ln.Addr().String(), &restarting))
 
 	go func() {
 		<-ctx.Done()
@@ -133,7 +134,11 @@ func Start(ctx context.Context, initialPaperID string, opts Options) error {
 	// Write server address file for CLI discovery
 	serverFile := ServerFilePath()
 	_ = os.WriteFile(serverFile, []byte(ln.Addr().String()), 0o644)
-	defer func() { _ = os.Remove(serverFile) }()
+	defer func() {
+		if !restarting {
+			_ = os.Remove(serverFile)
+		}
+	}()
 
 	fmt.Fprintf(os.Stderr, "arq view: %s (listening on %s)\n", url, ln.Addr())
 	if !opts.NoOpen {
@@ -357,7 +362,7 @@ func handleVersion(currentVersion string) http.HandlerFunc {
 	}
 }
 
-func handleRestart(srv *http.Server, listenAddr string) http.HandlerFunc {
+func handleRestart(srv *http.Server, listenAddr string, restarting *bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		exe, err := os.Executable()
 		if err != nil {
@@ -365,6 +370,7 @@ func handleRestart(srv *http.Server, listenAddr string) http.HandlerFunc {
 			return
 		}
 
+		*restarting = true
 		writeJSON(w, map[string]string{"status": "restarting"})
 
 		args := rebuildArgs(os.Args, listenAddr)
