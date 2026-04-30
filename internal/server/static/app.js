@@ -280,12 +280,27 @@ function loadPDF(id, japanese) {
 }
 
 // Download PDF
-function downloadPDF() {
+async function downloadPDF() {
   if (!selectedPaperID) return;
   const base = showJapanese
     ? `/api/papers/${selectedPaperID}/pdf/ja`
     : `/api/papers/${selectedPaperID}/pdf`;
-  window.open(base + "?download=1", "_blank");
+  const suffix = showJapanese ? "_ja" : "";
+  try {
+    const res = await fetch(base);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${selectedPaperID}${suffix}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (_) {
+    // Fallback: open in new tab
+    window.open(base, "_blank");
+  }
 }
 
 // Events: language toggle
