@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.29](https://github.com/orangekame3/arq/compare/v0.0.28...v0.0.29) - 2026-04-30
+- fix(download): update PDF download logic to open in new tab by @orangekame3 in https://github.com/orangekame3/arq/pull/79
+
 ## [v0.0.28](https://github.com/orangekame3/arq/compare/v0.0.27...v0.0.28) - 2026-04-30
 - fix(server): handle server restart logic and cleanup by @orangekame3 in https://github.com/orangekame3/arq/pull/77
 
