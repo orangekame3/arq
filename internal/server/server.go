@@ -192,6 +192,9 @@ func handlePDF(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+	if r.URL.Query().Get("download") != "" {
+		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s.pdf"`, p.ID))
+	}
 	http.ServeFile(w, r, paper.PDFPath(p))
 }
 
@@ -205,6 +208,9 @@ func handlePDFJa(w http.ResponseWriter, r *http.Request) {
 	if _, err := os.Stat(path); err != nil {
 		http.Error(w, "Japanese PDF not available", http.StatusNotFound)
 		return
+	}
+	if r.URL.Query().Get("download") != "" {
+		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s_ja.pdf"`, p.ID))
 	}
 	http.ServeFile(w, r, path)
 }
