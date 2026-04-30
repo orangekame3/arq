@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.24](https://github.com/orangekame3/arq/compare/v0.0.23...v0.0.24) - 2026-04-30
+- feat(download): add PDF download functionality and button by @orangekame3 in https://github.com/orangekame3/arq/pull/69
+
 ## [v0.0.23](https://github.com/orangekame3/arq/compare/v0.0.22...v0.0.23) - 2026-04-27
 - feat(mobile): implement mobile layout and functionality enhancements by @orangekame3 in https://github.com/orangekame3/arq/pull/67
 
