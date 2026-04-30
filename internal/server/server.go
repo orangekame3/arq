@@ -14,7 +14,6 @@ import (
 	"runtime"
 	"sort"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/orangekame3/arq/internal/paper"
@@ -383,7 +382,7 @@ func handleRestart(srv *http.Server, listenAddr string, restarting *bool) http.H
 			cmd := exec.Command(exe, args[1:]...)
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
-			cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
+			detachProcess(cmd)
 			if err := cmd.Start(); err != nil {
 				fmt.Fprintf(os.Stderr, "restart failed: %v\n", err)
 				os.Exit(1)
