@@ -50,6 +50,7 @@ const $btnEn = document.getElementById("btn-en");
 const $btnJa = document.getElementById("btn-ja");
 const $toolbarId = document.getElementById("toolbar-id");
 const $btnArxiv = document.getElementById("btn-arxiv");
+const $btnDownload = document.getElementById("btn-download");
 const $btnToggleMeta = document.getElementById("btn-toggle-meta");
 const $btnToggleSidebar = document.getElementById("btn-toggle-sidebar");
 const $btnToggleList = document.getElementById("btn-toggle-list");
@@ -176,6 +177,8 @@ async function selectPaper(id) {
   $btnArxiv.onclick = () =>
     window.open(`https://arxiv.org/abs/${detail.id}`, "_blank");
 
+  $btnDownload.onclick = () => downloadPDF();
+
   // Language toggle
   showJapanese = false;
   if (detail.has_pdf_ja) {
@@ -274,6 +277,17 @@ function loadPDF(id, japanese) {
     $pdfFrame.onload = () => $pdfLoading.classList.add("hidden");
     $pdfFrame.src = url + "#view=FitH";
   }
+}
+
+// Download PDF
+function downloadPDF() {
+  if (!selectedPaperID) return;
+  const base = showJapanese
+    ? `/api/papers/${selectedPaperID}/pdf/ja`
+    : `/api/papers/${selectedPaperID}/pdf`;
+  const a = document.createElement("a");
+  a.href = base + "?download=1";
+  a.click();
 }
 
 // Events: language toggle
@@ -420,6 +434,9 @@ document.addEventListener("keydown", (e) => {
   }
   if (e.key === "t" && !e.metaKey) {
     $btnToggleTheme.click();
+  }
+  if (e.key === "d" && !e.metaKey) {
+    downloadPDF();
   }
   if (e.key === "f" && !e.metaKey) {
     const isFullscreen = $sidebar.classList.contains("collapsed") &&
