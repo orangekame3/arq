@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.30](https://github.com/orangekame3/arq/compare/v0.0.29...v0.0.30) - 2026-04-30
+- fix(download): improve PDF download logic with fallback to new tab by @orangekame3 in https://github.com/orangekame3/arq/pull/81
+
 ## [v0.0.29](https://github.com/orangekame3/arq/compare/v0.0.28...v0.0.29) - 2026-04-30
 - fix(download): update PDF download logic to open in new tab by @orangekame3 in https://github.com/orangekame3/arq/pull/79
 
