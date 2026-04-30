@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.28](https://github.com/orangekame3/arq/compare/v0.0.27...v0.0.28) - 2026-04-30
+- fix(server): handle server restart logic and cleanup by @orangekame3 in https://github.com/orangekame3/arq/pull/77
+
 ## [v0.0.27](https://github.com/orangekame3/arq/compare/v0.0.26...v0.0.27) - 2026-04-30
 - feat(download): enhance PDF download functionality with language suffix by @orangekame3 in https://github.com/orangekame3/arq/pull/75
 
