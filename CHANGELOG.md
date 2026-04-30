@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.26](https://github.com/orangekame3/arq/compare/v0.0.25...v0.0.26) - 2026-04-30
+- feat(config): add view.listen configuration option by @orangekame3 in https://github.com/orangekame3/arq/pull/73
+
 ## [v0.0.25](https://github.com/orangekame3/arq/compare/v0.0.24...v0.0.25) - 2026-04-30
 - feat(server): add version check and restart functionality by @orangekame3 in https://github.com/orangekame3/arq/pull/71
 
