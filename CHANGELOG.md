@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.0.33](https://github.com/orangekame3/arq/compare/v0.0.32...v0.0.33) - 2026-05-05
+- chore(deps): bump github.com/mattn/go-isatty from 0.0.21 to 0.0.22 by @dependabot[bot] in https://github.com/orangekame3/arq/pull/87
+- chore(deps): bump charm.land/fantasy from 0.21.0 to 0.23.0 by @dependabot[bot] in https://github.com/orangekame3/arq/pull/88
+
 ## [v0.0.32](https://github.com/orangekame3/arq/compare/v0.0.31...v0.0.32) - 2026-04-30
 - fix(server): implement detachProcess for cross-platform restart handling by @orangekame3 in https://github.com/orangekame3/arq/pull/85
 
